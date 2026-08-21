@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="700.0" minWidth="1000.0" spacing="15.0" stylesheets="@../styles/FbiTheme.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fbi.criminal_justice_system.controllers.UserController">
+   <children>
+      <HBox alignment="CENTER_LEFT" spacing="15.0">
+         <children>
+            <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label styleClass="section-title" text="Administración de Usuarios" />
+                  <Label fx:id="lblPermissionHint" styleClass="section-subtitle" text="" />
+               </children>
+            </VBox>
+            <HBox alignment="CENTER_RIGHT" spacing="12.0">
+               <children>
+                  <Button fx:id="btnRefreshUser" minHeight="40.0" minWidth="110.0" mnemonicParsing="false" onAction="#onActionBtnRefreshUser" styleClass="btn-secondary" text="Refrescar" />
+                  <Button fx:id="btnEditUser" minHeight="40.0" minWidth="110.0" mnemonicParsing="false" onAction="#onActionBtnEditUser" styleClass="btn-secondary" text="Editar" />
+                  <Button fx:id="btnDeleteUser" minHeight="40.0" minWidth="110.0" mnemonicParsing="false" onAction="#onActionBtnDeleteUser" styleClass="btn-danger" text="Eliminar" />
+                  <Button fx:id="btnAddUser" minHeight="40.0" minWidth="130.0" mnemonicParsing="false" onAction="#onActionBtnAddUser" styleClass="btn-primary" text="Agregar Usuario" />
+               </children>
+            </HBox>
+         </children>
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+      </HBox>
+
+      <Region maxHeight="1.0" minHeight="1.0" prefHeight="1.0" styleClass="section-divider" />
+
+      <TableView fx:id="tableUsers" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+        <columns>
+          <TableColumn fx:id="colUserId" minWidth="50.0" prefWidth="50.0" text="ID" />
+          <TableColumn fx:id="colUserName" minWidth="200.0" prefWidth="200.0" text="Nombre" />
+            <TableColumn fx:id="colUsername" minWidth="160.0" prefWidth="160.0" text="Usuario" />
+            <TableColumn fx:id="colUserRole" minWidth="140.0" prefWidth="140.0" text="Rol" />
+            <TableColumn fx:id="colUserActive" minWidth="100.0" prefWidth="100.0" text="Estado" />
+        </columns>
+      </TableView>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</VBox>
