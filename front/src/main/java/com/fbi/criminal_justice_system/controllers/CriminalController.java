@@ -9,6 +9,7 @@ import com.fbi.criminal_justice_system.utils.AppContext;
 import com.fbi.criminal_justice_system.utils.BackgroundTask;
 import com.fbi.criminal_justice_system.utils.CriminalTable;
 import com.fbi.criminal_justice_system.utils.FlowController;
+import com.fbi.criminal_justice_system.utils.RequestGuard;
 import com.fbi.criminal_justice_system.utils.Session;
 import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
@@ -66,35 +67,28 @@ public class CriminalController extends Controller {
 	 */
 	private final PauseTransition searchDebounce = new PauseTransition(Duration.millis(350));
 
-	/**
-	 * {@code initialize()} se ejecuta cada vez que el FlowController muestra la
-	 * vista, no solo la primera. Columnas y listeners se configuran una única vez;
-	 * los datos se recargan siempre para no mostrar información vieja.
-	 */
-	private boolean configured;
+	/** Descarta respuestas de búsquedas que quedaron viejas. */
+	private final RequestGuard requestGuard = new RequestGuard();
 
 	@Override
 	public void initialize() {
-		if (!configured) {
-			CriminalTable.configureColumns(colId, colName, colAlias, colCrime, colDangerLevel, colStatus);
-			tableCriminals.setItems(criminals);
-			configureSearch();
-			configurePermissions();
-			configured = true;
-		}
+		CriminalTable.configureColumns(colId, colName, colAlias, colCrime, colDangerLevel, colStatus);
+		tableCriminals.setItems(criminals);
+
+		searchDebounce.setOnFinished(event -> loadData());
+		txtSearchCriminal.textProperty()
+				.addListener((observable, oldValue, newValue) -> searchDebounce.playFromStart());
+	}
+
+	@Override
+	public void onViewShown() {
+		configurePermissions();
 		loadData();
 	}
 
 	@Override
 	public String getNombreVista() {
 		return "Criminales";
-	}
-
-	/** La búsqueda la resuelve el servidor; acá solo se manda el texto. */
-	private void configureSearch() {
-		searchDebounce.setOnFinished(event -> loadData());
-		txtSearchCriminal.textProperty()
-				.addListener((observable, oldValue, newValue) -> searchDebounce.playFromStart());
 	}
 
 	/**
@@ -114,18 +108,28 @@ public class CriminalController extends Controller {
 	 */
 	private void loadData() {
 		String filter = txtSearchCriminal.getText();
+		long ticket = requestGuard.next();
 
 		tableCriminals.setPlaceholder(new Label("Consultando el sistema..."));
 		btnSearchCriminal.setDisable(true);
 
 		BackgroundTask.run(() -> criminalService.search(filter, null, null), result -> {
+			if (!requestGuard.isCurrent(ticket)) {
+				return; // llegó tarde: ya hay una búsqueda más nueva
+			}
 			criminals.setAll(result);
 			tableCriminals.setPlaceholder(new Label("No hay criminales que coincidan con la búsqueda."));
 			btnSearchCriminal.setDisable(false);
 		}, error -> {
+			if (!requestGuard.isCurrent(ticket)) {
+				return;
+			}
+			btnSearchCriminal.setDisable(false);
+			if (handleExpiredSession(error)) {
+				return;
+			}
 			criminals.clear();
 			tableCriminals.setPlaceholder(new Label(describeError(error)));
-			btnSearchCriminal.setDisable(false);
 		});
 	}
 
@@ -142,21 +146,16 @@ public class CriminalController extends Controller {
 
 	@FXML
 	private void onActionBtnEditCriminal(ActionEvent event) {
-		CriminalDTO selected = tableCriminals.getSelectionModel().getSelectedItem();
-		if (selected == null) {
-			mensaje.showModal(AlertType.WARNING, "Editar criminal", stage,
-					"Seleccioná primero un criminal de la tabla.");
-			return;
+		CriminalDTO selected = requireSelection("Editar criminal");
+		if (selected != null) {
+			openForm(selected);
 		}
-		openForm(selected);
 	}
 
 	@FXML
 	private void onActionBtnDeleteCriminal(ActionEvent event) {
-		CriminalDTO selected = tableCriminals.getSelectionModel().getSelectedItem();
+		CriminalDTO selected = requireSelection("Eliminar criminal");
 		if (selected == null) {
-			mensaje.showModal(AlertType.WARNING, "Eliminar criminal", stage,
-					"Seleccioná primero un criminal de la tabla.");
 			return;
 		}
 
@@ -172,7 +171,19 @@ public class CriminalController extends Controller {
 		}, ignored -> {
 			mensaje.show(AlertType.INFORMATION, "Eliminar criminal", "Criminal eliminado correctamente.");
 			loadData();
-		}, error -> mensaje.showModal(AlertType.ERROR, "Eliminar criminal", stage, describeError(error)));
+		}, error -> {
+			if (!handleExpiredSession(error)) {
+				mensaje.showModal(AlertType.ERROR, "Eliminar criminal", stage, describeError(error));
+			}
+		});
+	}
+
+	private CriminalDTO requireSelection(String titulo) {
+		CriminalDTO selected = tableCriminals.getSelectionModel().getSelectedItem();
+		if (selected == null) {
+			mensaje.showModal(AlertType.WARNING, titulo, stage, "Seleccioná primero un criminal de la tabla.");
+		}
+		return selected;
 	}
 
 	/**

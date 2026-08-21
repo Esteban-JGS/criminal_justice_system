@@ -8,6 +8,7 @@ import com.fbi.criminal_justice_system.services.CriminalService;
 import com.fbi.criminal_justice_system.utils.BackgroundTask;
 import com.fbi.criminal_justice_system.utils.ComboBoxUtils;
 import com.fbi.criminal_justice_system.utils.CriminalTable;
+import com.fbi.criminal_justice_system.utils.RequestGuard;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -61,24 +62,25 @@ public class SearchController extends Controller {
 	private final CriminalService criminalService = new CriminalService();
 	private final ObservableList<CriminalDTO> results = FXCollections.observableArrayList();
 
-	private boolean configured;
+	/** Descarta respuestas de búsquedas que quedaron viejas. */
+	private final RequestGuard requestGuard = new RequestGuard();
 
 	@Override
 	public void initialize() {
-		if (!configured) {
-			CriminalTable.configureColumns(colId, colName, colAlias, colCrime, colDangerLevel, colStatus);
-			tableResults.setItems(results);
+		CriminalTable.configureColumns(colId, colName, colAlias, colCrime, colDangerLevel, colStatus);
+		tableResults.setItems(results);
 
-			ComboBoxUtils.configureWithAllOption(cmbStatus, List.of(CriminalStatus.values()), CriminalStatus::getLabel,
-					"Todos");
-			ComboBoxUtils.configureWithAllOption(cmbDangerLevel, List.of(DangerLevel.values()), DangerLevel::getLabel,
-					"Todas");
+		ComboBoxUtils.configureWithAllOption(cmbStatus, List.of(CriminalStatus.values()), CriminalStatus::getLabel,
+				"Todos");
+		ComboBoxUtils.configureWithAllOption(cmbDangerLevel, List.of(DangerLevel.values()), DangerLevel::getLabel,
+				"Todas");
 
-			// Enter en el campo de texto equivale a pulsar Buscar.
-			txtSearchText.setOnAction(event -> search());
-			configured = true;
-		}
+		// Enter en el campo de texto equivale a pulsar Buscar.
+		txtSearchText.setOnAction(event -> search());
+	}
 
+	@Override
+	public void onViewShown() {
 		clearFilters();
 	}
 
@@ -101,21 +103,31 @@ public class SearchController extends Controller {
 		String text = txtSearchText.getText();
 		CriminalStatus status = cmbStatus.getValue();
 		DangerLevel dangerLevel = cmbDangerLevel.getValue();
+		long ticket = requestGuard.next();
 
 		lblResults.setText("Consultando el sistema...");
 		tableResults.setPlaceholder(new Label("Consultando el sistema..."));
 		btnSearch.setDisable(true);
 
 		BackgroundTask.run(() -> criminalService.search(text, status, dangerLevel), found -> {
+			if (!requestGuard.isCurrent(ticket)) {
+				return; // llegó tarde: ya hay una búsqueda más nueva
+			}
 			results.setAll(found);
 			lblResults.setText(found.size() + " resultado(s) con los filtros aplicados.");
 			tableResults.setPlaceholder(new Label("Ningún criminal coincide con esos filtros."));
 			btnSearch.setDisable(false);
 		}, error -> {
+			if (!requestGuard.isCurrent(ticket)) {
+				return;
+			}
+			btnSearch.setDisable(false);
+			if (handleExpiredSession(error)) {
+				return;
+			}
 			results.clear();
 			lblResults.setText("");
 			tableResults.setPlaceholder(new Label(describeError(error)));
-			btnSearch.setDisable(false);
 		});
 	}
 

@@ -56,24 +56,8 @@ public class UserController extends Controller {
 	private final UserService userService = new UserService();
 	private final ObservableList<UserDTO> users = FXCollections.observableArrayList();
 
-	private boolean configured;
-
 	@Override
 	public void initialize() {
-		if (!configured) {
-			configureColumns();
-			configurePermissions();
-			configured = true;
-		}
-		loadData();
-	}
-
-	@Override
-	public String getNombreVista() {
-		return "Usuarios";
-	}
-
-	private void configureColumns() {
 		colUserId.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().getId()));
 		colUserName.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getName()));
 		colUsername.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getUsername()));
@@ -83,6 +67,17 @@ public class UserController extends Controller {
 				Boolean.FALSE.equals(cell.getValue().getActive()) ? "Inactivo" : "Activo"));
 
 		tableUsers.setItems(users);
+	}
+
+	@Override
+	public void onViewShown() {
+		configurePermissions();
+		loadData();
+	}
+
+	@Override
+	public String getNombreVista() {
+		return "Usuarios";
 	}
 
 	private void configurePermissions() {
@@ -106,9 +101,12 @@ public class UserController extends Controller {
 			tableUsers.setPlaceholder(new Label("No hay usuarios registrados."));
 			btnRefreshUser.setDisable(false);
 		}, error -> {
+			btnRefreshUser.setDisable(false);
+			if (handleExpiredSession(error)) {
+				return;
+			}
 			users.clear();
 			tableUsers.setPlaceholder(new Label(describeError(error)));
-			btnRefreshUser.setDisable(false);
 		});
 	}
 
@@ -137,7 +135,7 @@ public class UserController extends Controller {
 			return;
 		}
 
-		// Sin esto, el jefe puede borrarse a sí mismo y quedarse afuera del sistema.
+		// El WS también lo rechaza; acá se evita el viaje y se explica mejor.
 		UserDTO current = Session.getUser();
 		if (current != null && current.getId().equals(selected.getId())) {
 			mensaje.showModal(AlertType.WARNING, "Eliminar usuario", stage,
@@ -157,7 +155,11 @@ public class UserController extends Controller {
 		}, ignored -> {
 			mensaje.show(AlertType.INFORMATION, "Eliminar usuario", "Usuario eliminado correctamente.");
 			loadData();
-		}, error -> mensaje.showModal(AlertType.ERROR, "Eliminar usuario", stage, describeError(error)));
+		}, error -> {
+			if (!handleExpiredSession(error)) {
+				mensaje.showModal(AlertType.ERROR, "Eliminar usuario", stage, describeError(error));
+			}
+		});
 	}
 
 	private UserDTO requireSelection(String titulo) {

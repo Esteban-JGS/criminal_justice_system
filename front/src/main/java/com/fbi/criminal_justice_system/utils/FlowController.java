@@ -103,12 +103,13 @@ public class FlowController {
 		FXMLLoader loader = getLoader(viewName);
 		Controller controller = loader.getController();
 		// controller.setAccion(accion);
-		controller.initialize();
 		Stage stage = controller.getStage();
 		if (stage == null) {
 			stage = this.mainStage;
 			controller.setStage(stage);
 		}
+		// Con el stage ya asignado: el controlador puede abrir diálogos desde aquí.
+		controller.onViewShown();
 		switch (location) {
 			case "Center" :
 
@@ -147,25 +148,26 @@ public class FlowController {
 		MFXThemeManager.addOn(stage.getScene(), Themes.DEFAULT, Themes.LEGACY);
 
 	}
-
 	public void goViewInWindow(String viewName) {
 		FXMLLoader loader = getLoader(viewName);
 		Controller controller = loader.getController();
-		controller.initialize();
 		Stage stage = new Stage();
 		stage.getIcons().add(new Image(
 				App.class.getResource("/com/fbi/criminal_justice_system/images/FBI_icon.png").toExternalForm()));
-		stage.setTitle(controller.getNombreVista());
 		stage.setOnHidden((WindowEvent event) -> {
 			controller.getStage().getScene().setRoot(new Pane());
 			controller.setStage(null);
 		});
 		controller.setStage(stage);
+		// onViewShown antes del título: el controlador puede cambiarlo según lo que
+		// cargue.
+		controller.onViewShown();
+		stage.setTitle(controller.getNombreVista());
 		Parent root = loader.getRoot();
 		Scene scene = new Scene(root);
 		MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
 		stage.setScene(scene);
-		applyWindowConstraints(this.mainStage); // ← aquí
+		applyWindowConstraints(this.mainStage);
 		stage.centerOnScreen();
 		stage.show();
 	}
@@ -173,17 +175,17 @@ public class FlowController {
 	public void goViewInWindowModal(String viewName, Stage parentStage, Boolean resizable) {
 		FXMLLoader loader = getLoader(viewName);
 		Controller controller = loader.getController();
-		controller.initialize();
 		Stage stage = new Stage();
 		stage.getIcons().add(new Image(
 				App.class.getResource("/com/fbi/criminal_justice_system/images/FBI_icon.png").toExternalForm()));
-		stage.setTitle(controller.getNombreVista());
 		stage.setResizable(resizable);
 		stage.setOnHidden((WindowEvent event) -> {
 			controller.getStage().getScene().setRoot(new Pane());
 			controller.setStage(null);
 		});
 		controller.setStage(stage);
+		controller.onViewShown();
+		stage.setTitle(controller.getNombreVista());
 		Parent root = loader.getRoot();
 		Scene scene = new Scene(root);
 		MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
@@ -193,7 +195,6 @@ public class FlowController {
 		stage.initOwner(parentStage);
 		stage.centerOnScreen();
 		stage.showAndWait();
-
 	}
 
 	public Controller getController(String viewName) {

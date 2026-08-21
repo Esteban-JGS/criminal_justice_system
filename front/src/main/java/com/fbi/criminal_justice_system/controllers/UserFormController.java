@@ -65,7 +65,7 @@ public class UserFormController extends Controller {
 	private UserDTO editing;
 
 	@Override
-	public void initialize() {
+	public void onViewShown() {
 		loadSelection();
 		loadRoles();
 	}
@@ -81,6 +81,7 @@ public class UserFormController extends Controller {
 
 		lblError.setText("");
 		txtPassword.clear();
+		setLoading(false);
 
 		if (editing == null) {
 			lblFormTitle.setText("Agregar Usuario");
@@ -88,7 +89,6 @@ public class UserFormController extends Controller {
 			lblPassword.setText("CONTRASEÑA *");
 			txtName.clear();
 			txtUsername.clear();
-			txtUsername.setDisable(false);
 			cmbRole.setValue(null);
 			chkActive.setSelected(true);
 		} else {
@@ -150,6 +150,11 @@ public class UserFormController extends Controller {
 					stage.close();
 				}, failure -> {
 					setLoading(false);
+					if (isUnauthorized(failure)) {
+						stage.close();
+						handleExpiredSession(failure);
+						return;
+					}
 					lblError.setText(describeError(failure));
 				});
 	}

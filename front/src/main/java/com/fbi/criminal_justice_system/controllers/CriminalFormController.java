@@ -60,29 +60,20 @@ public class CriminalFormController extends Controller {
 	/** El que se está editando; {@code null} en modo registro. */
 	private CriminalDTO editing;
 
-	private boolean configured;
-
 	@Override
 	public void initialize() {
-		if (!configured) {
-			configureCombos();
-			configured = true;
-		}
+		ComboBoxUtils.configure(cmbDangerLevel, List.of(DangerLevel.values()), DangerLevel::getLabel);
+		ComboBoxUtils.configure(cmbStatus, List.of(CriminalStatus.values()), CriminalStatus::getLabel);
+	}
+
+	@Override
+	public void onViewShown() {
 		loadSelection();
 	}
 
 	@Override
 	public String getNombreVista() {
 		return editing == null ? "Registrar Criminal" : "Editar Criminal";
-	}
-
-	/**
-	 * Los combos guardan el enum y muestran su etiqueta. Así lo que se envía al WS
-	 * es siempre un valor válido: el usuario no puede escribir "Altisimo".
-	 */
-	private void configureCombos() {
-		ComboBoxUtils.configure(cmbDangerLevel, List.of(DangerLevel.values()), DangerLevel::getLabel);
-		ComboBoxUtils.configure(cmbStatus, List.of(CriminalStatus.values()), CriminalStatus::getLabel);
 	}
 
 	/** Carga los datos del criminal seleccionado, o limpia todo si es uno nuevo. */
@@ -98,7 +89,7 @@ public class CriminalFormController extends Controller {
 			txtName.clear();
 			txtAlias.clear();
 			txtCrime.clear();
-			cmbDangerLevel.getSelectionModel().clearSelection();
+			cmbDangerLevel.setValue(null);
 			cmbStatus.setValue(CriminalStatus.ACTIVO);
 		} else {
 			lblFormTitle.setText("Editar Criminal");
@@ -132,6 +123,13 @@ public class CriminalFormController extends Controller {
 					stage.close();
 				}, failure -> {
 					setLoading(false);
+					if (isUnauthorized(failure)) {
+						// Primero se cierra el formulario: no tiene sentido dejarlo abierto
+						// encima del login.
+						stage.close();
+						handleExpiredSession(failure);
+						return;
+					}
 					lblError.setText(describeError(failure));
 				});
 	}
@@ -169,5 +167,4 @@ public class CriminalFormController extends Controller {
 			lblError.setText("");
 		}
 	}
-
 }
