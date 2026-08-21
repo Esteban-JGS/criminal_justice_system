@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    PLANTILLA — todavía NO está activa.
+
+    Este archivo tiene extensión .oracle-template a propósito: si se llamara
+    persistence.xml, Payara intentaría levantar la unidad de persistencia al
+    desplegar y el despliegue fallaría porque el datasource jdbc/CriminalJusticeDS
+    aún no existe.
+
+    Para activarlo:
+      1. Crear el JDBC Connection Pool y el JDBC Resource en Payara
+         (ver ws/docs/oracle-migration.md).
+      2. Renombrar este archivo a persistence.xml.
+      3. Crear las entidades @Entity y los repositorios JPA.
+-->
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+                                 https://jakarta.ee/xml/ns/persistence/persistence_3_1.xsd"
+             version="3.1">
+
+    <persistence-unit name="CriminalJusticePU" transaction-type="JTA">
+        <!-- Nombre JNDI del JDBC Resource creado en Payara -->
+        <jta-data-source>jdbc/CriminalJusticeDS</jta-data-source>
+
+        <properties>
+            <!-- Payara trae EclipseLink como proveedor JPA por defecto -->
+            <property name="eclipselink.logging.level" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="true"/>
+
+            <!-- Esquema por defecto en Oracle (normalmente el usuario del curso) -->
+            <!-- <property name="eclipselink.default-schema" value="UNA"/> -->
+
+            <!--
+                En desarrollo se puede pedir que EclipseLink genere las tablas.
+                En producción NUNCA: los cambios de esquema se hacen con scripts.
+            -->
+            <!-- <property name="jakarta.persistence.schema-generation.database.action" value="create"/> -->
+        </properties>
+    </persistence-unit>
+</persistence>
