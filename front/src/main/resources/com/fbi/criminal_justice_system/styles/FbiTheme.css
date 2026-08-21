@@ -1,0 +1,562 @@
+/* ================================================================
+   fbi-theme.css | Sistema de Diseño FBI
+   ================================================================
+   ARQUITECTURA:
+     1. Variables globales (tokens de diseño)
+     2. Reset y base
+     3. Layout
+     4. Navegación
+     5. Tipografía utilitaria
+     6. Inputs y formularios
+     7. Botones
+     8. Tabla
+     9. Tags y badges
+    10. Login
+    11. Scrollbars
+   ================================================================ */
+
+/* ================================================================
+   1. VARIABLES GLOBALES
+   ================================================================ */
+.root {
+	/* ── Paleta base ── */
+	-color-bg-0: #07070d; /* fondo más profundo */
+	-color-bg-1: #0d0d16; /* fondo principal */
+	-color-bg-2: #13131f; /* superficies elevadas */
+	-color-bg-3: #1a1a2a; /* hover de superficies */
+	-color-border: #252538; /* bordes sutiles */
+	-color-border-mid: #303050; /* bordes con más presencia */
+
+	/* ── Acento dorado ── */
+	-color-gold: #c8a84b;
+	-color-gold-bright: #e0c36a;
+	-color-gold-dim: #6b5a28;
+	-color-gold-glow: rgba(200, 168, 75, 0.2);
+
+	/* ── Texto ── */
+	-color-text-1: #eeeef5; /* texto principal */
+	-color-text-2: #9090b0; /* texto secundario */
+	-color-text-3: #55556a; /* texto deshabilitado */
+
+	/* ── Estados semánticos ── */
+	-color-danger: #c0392b;
+	-color-danger-bg: #2d0f0c;
+	-color-warning: #e67e22;
+	-color-warning-bg: #2d1a08;
+	-color-success: #27ae60;
+	-color-success-bg: #0a2d18;
+
+	/* ── Radios ── */
+	-radius-sm: 4px;
+	-radius-md: 6px;
+	-radius-lg: 10px;
+
+	/* ── Base tipográfica ── */
+	-fx-font-family: "Segoe UI", sans-serif;
+	-fx-font-size: 13px;
+	-fx-background-color: -color-bg-1;
+}
+
+/* ================================================================
+   2. RESET Y BASE
+   ================================================================ */
+.label {
+	-fx-text-fill: -color-text-1;
+}
+
+/* Quita el focus ring azul nativo de JavaFX en todos los controles */
+.text-field:focused,
+.password-field:focused,
+.button:focused,
+.combo-box:focused,
+.table-view:focused {
+	-fx-background-insets: 0;
+}
+
+/* ================================================================
+   3. LAYOUT
+   ================================================================ */
+.top-bar {
+	-fx-background-color: -color-bg-2;
+	-fx-border-color: transparent transparent -color-gold transparent;
+	-fx-border-width: 0 0 1.5 0;
+	-fx-padding: 10 20 10 20;
+	-fx-spacing: 12;
+	-fx-alignment: CENTER_LEFT;
+	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.55), 12, 0, 0, 4);
+}
+
+.content-area {
+	-fx-background-color: -color-bg-1;
+	-fx-padding: 24 28 24 28;
+	-fx-spacing: 16;
+}
+
+/* ================================================================
+   4. NAVEGACIÓN
+   ================================================================ */
+.top-bar-title {
+	-fx-text-fill: -color-gold;
+	-fx-font-size: 14px;
+	-fx-font-weight: bold;
+}
+
+.top-bar-badge {
+	-fx-text-fill: -color-text-1;
+	-fx-font-size: 12px;
+}
+
+.top-bar-role {
+	-fx-text-fill: -color-gold;
+	-fx-font-size: 10px;
+	-fx-font-weight: bold;
+	-fx-background-color: -color-bg-3;
+	-fx-border-color: -color-gold-dim;
+	-fx-border-radius: 4;
+	-fx-background-radius: 4;
+	-fx-padding: 3 10 3 10;
+}
+
+.nav-button {
+	-fx-background-color: transparent;
+	-fx-text-fill: -color-text-2;
+	-fx-font-size: 12px;
+	-fx-font-weight: bold;
+	-fx-padding: 10 16 10 16;
+	-fx-cursor: hand;
+	-fx-border-color: transparent;
+	-fx-background-radius: 0;
+	-fx-border-radius: 0;
+}
+
+.nav-button:hover {
+	-fx-background-color: -color-bg-3;
+	-fx-text-fill: -color-gold-bright;
+}
+
+.nav-button-active {
+	-fx-background-color: transparent;
+	-fx-text-fill: -color-gold;
+	-fx-font-weight: bold;
+	-fx-border-color: transparent transparent -color-gold transparent;
+	-fx-border-width: 0 0 2 0;
+}
+
+.nav-button-active:hover {
+	-fx-background-color: -color-bg-3;
+}
+
+.btn-logout {
+	-fx-background-color: transparent;
+	-fx-text-fill: -color-text-3;
+	-fx-font-size: 11px;
+	-fx-padding: 6 14 6 14;
+	-fx-cursor: hand;
+	-fx-border-color: -color-border;
+	-fx-border-radius: 4;
+	-fx-background-radius: 4;
+}
+
+.btn-logout:hover {
+	-fx-background-color: -color-danger-bg;
+	-fx-text-fill: -color-danger;
+	-fx-border-color: -color-danger;
+}
+
+/* ================================================================
+   5. TIPOGRAFÍA UTILITARIA
+   ================================================================ */
+.section-title {
+	-fx-text-fill: -color-text-1;
+	-fx-font-size: 17px;
+	-fx-font-weight: bold;
+}
+
+.section-subtitle {
+	-fx-text-fill: -color-text-2;
+	-fx-font-size: 12px;
+}
+
+.section-divider {
+	-fx-background-color: -color-border;
+	-fx-pref-height: 1;
+	-fx-max-height: 1;
+}
+
+.form-label {
+	-fx-text-fill: -color-text-2;
+	-fx-font-size: 11px;
+	-fx-font-weight: bold;
+}
+
+/* ================================================================
+   6. INPUTS Y FORMULARIOS
+   ================================================================ */
+.text-field,
+.password-field,
+.text-area,
+.search-box,
+.form-field,
+.login-field {
+	-fx-background-color: -color-bg-2;
+	-fx-border-color: -color-border;
+	-fx-border-radius: 4;
+	-fx-background-radius: 4;
+	-fx-text-fill: -color-text-1;
+	-fx-prompt-text-fill: -color-text-3;
+	-fx-highlight-fill: -color-gold-glow;
+	-fx-font-size: 12px;
+	-fx-padding: 9 12 9 12;
+}
+
+.text-field:focused,
+.password-field:focused,
+.text-area:focused,
+.search-box:focused,
+.form-field:focused,
+.login-field:focused {
+	-fx-border-color: -color-gold;
+	-fx-background-color: -color-bg-3;
+	-fx-effect: dropshadow(gaussian, -color-gold-glow, 8, 0, 0, 0);
+}
+
+/* Ajustes de tamaño por contexto */
+.search-box {
+	-fx-padding: 8 14 8 14;
+	-fx-pref-width: 260px;
+}
+
+.login-field {
+	-fx-padding: 11 16 11 16;
+	-fx-pref-width: 320px;
+	-fx-font-size: 13px;
+}
+
+/* ── ComboBox ── */
+.combo-box {
+	-fx-background-color: -color-bg-2;
+	-fx-border-color: -color-border;
+	-fx-border-radius: 4;
+	-fx-background-radius: 4;
+}
+
+.combo-box:focused {
+	-fx-border-color: -color-gold;
+	-fx-effect: dropshadow(gaussian, -color-gold-glow, 8, 0, 0, 0);
+}
+
+.combo-box .list-cell {
+	-fx-text-fill: -color-text-1;
+	-fx-background-color: transparent;
+	-fx-padding: 4 10 4 10;
+}
+
+.combo-box > .button {
+	-fx-background-color: transparent;
+}
+
+.combo-box > .button > .arrow-button > .arrow {
+	-fx-background-color: -color-text-2;
+}
+
+.combo-box-popup .list-view {
+	-fx-background-color: -color-bg-2;
+	-fx-border-color: -color-border-mid;
+	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 16, 0, 0, 6);
+}
+
+.combo-box-popup .list-cell:hover {
+	-fx-background-color: -color-bg-3;
+	-fx-text-fill: -color-gold-bright;
+}
+
+.combo-box-popup .list-cell:selected {
+	-fx-background-color: -color-bg-3;
+	-fx-text-fill: -color-gold;
+}
+
+/* ================================================================
+   7. BOTONES
+   ================================================================ */
+
+/* Primario, dorado sólido */
+.btn-primary {
+	-fx-background-color: -color-gold;
+	-fx-text-fill: -color-bg-0;
+	-fx-font-weight: bold;
+	-fx-font-size: 12px;
+	-fx-padding: 9 22 9 22;
+	-fx-background-radius: 4;
+	-fx-border-color: transparent;
+	-fx-cursor: hand;
+	-fx-effect: dropshadow(gaussian, -color-gold-glow, 10, 0, 0, 2);
+}
+
+.btn-primary:hover {
+	-fx-background-color: -color-gold-bright;
+	-fx-effect: dropshadow(gaussian, -color-gold-glow, 18, 0, 0, 3);
+}
+
+.btn-primary:pressed {
+	-fx-background-color: -color-gold-dim;
+	-fx-effect: none;
+}
+
+/* Secundario, contorno dorado */
+.btn-secondary {
+	-fx-background-color: transparent;
+	-fx-text-fill: -color-gold;
+	-fx-font-size: 12px;
+	-fx-padding: 8 22 8 22;
+	-fx-background-radius: 4;
+	-fx-border-color: -color-gold-dim;
+	-fx-border-radius: 4;
+	-fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+	-fx-background-color: -color-bg-3;
+	-fx-border-color: -color-gold;
+	-fx-text-fill: -color-gold-bright;
+}
+
+.btn-secondary:pressed {
+	-fx-background-color: -color-bg-2;
+}
+
+/* Danger, destructivo */
+.btn-danger {
+	-fx-background-color: transparent;
+	-fx-text-fill: -color-danger;
+	-fx-font-size: 12px;
+	-fx-padding: 8 22 8 22;
+	-fx-background-radius: 4;
+	-fx-border-color: -color-danger;
+	-fx-border-radius: 4;
+	-fx-cursor: hand;
+}
+
+.btn-danger:hover {
+	-fx-background-color: -color-danger-bg;
+}
+
+.btn-danger:pressed {
+	-fx-background-color: -color-danger;
+	-fx-text-fill: white;
+}
+
+/* Login, ancho completo */
+.login-btn {
+	-fx-background-color: -color-gold;
+	-fx-text-fill: -color-bg-0;
+	-fx-font-weight: bold;
+	-fx-font-size: 13px;
+	-fx-padding: 12 0 12 0;
+	-fx-pref-width: 320px;
+	-fx-background-radius: 4;
+	-fx-cursor: hand;
+	-fx-border-color: transparent;
+	-fx-effect: dropshadow(gaussian, -color-gold-glow, 14, 0, 0, 3);
+}
+
+.login-btn:hover {
+	-fx-background-color: -color-gold-bright;
+	-fx-effect: dropshadow(gaussian, -color-gold-glow, 22, 0, 0, 4);
+}
+
+.login-btn:pressed {
+	-fx-background-color: -color-gold-dim;
+	-fx-effect: none;
+}
+
+/* ================================================================
+   8. TABLA
+   ================================================================ */
+.table-view {
+	-fx-background-color: -color-bg-2;
+	-fx-border-color: -color-border;
+	-fx-border-radius: 6;
+	-fx-background-radius: 6;
+	-fx-table-cell-border-color: transparent;
+	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 3);
+}
+
+.table-view .column-header-background {
+	-fx-background-color: -color-bg-3;
+}
+
+.table-view .filler {
+	-fx-background-color: -color-bg-3;
+	-fx-border-color: transparent transparent -color-border transparent;
+	-fx-border-width: 0 0 1 0;
+}
+
+.table-view .column-header {
+	-fx-background-color: transparent;
+	-fx-border-color: transparent transparent -color-border transparent;
+	-fx-border-width: 0 0 1 0;
+	-fx-size: 40px;
+}
+
+.table-view .column-header .label {
+	-fx-text-fill: -color-gold;
+	-fx-font-weight: bold;
+	-fx-font-size: 11px;
+	-fx-alignment: CENTER_LEFT;
+	-fx-padding: 0 0 0 4;
+}
+
+.table-view .table-row-cell {
+	-fx-background-color: -color-bg-2;
+	-fx-border-color: transparent transparent -color-border transparent;
+	-fx-border-width: 0 0 1 0;
+	-fx-table-cell-border-color: transparent;
+	-fx-cell-size: 38px;
+}
+
+.table-view .table-row-cell:odd {
+	-fx-background-color: -color-bg-1;
+}
+
+.table-view .table-row-cell:hover {
+	-fx-background-color: -color-bg-3;
+}
+
+.table-view .table-row-cell:selected {
+	-fx-background-color: #1e1e32;
+	-fx-border-color: transparent transparent -color-border-mid transparent;
+}
+
+.table-view .table-cell {
+	-fx-text-fill: -color-text-1;
+	-fx-font-size: 12px;
+	-fx-padding: 0 12 0 12;
+	-fx-alignment: CENTER_LEFT;
+}
+
+.table-view .table-cell:selected {
+	-fx-text-fill: -color-gold-bright;
+}
+
+.table-view .placeholder .label {
+	-fx-text-fill: -color-text-3;
+	-fx-font-size: 13px;
+}
+
+/* ================================================================
+   9. TAGS Y BADGES
+   ================================================================ */
+.tag-high {
+	-fx-background-color: -color-danger-bg;
+	-fx-text-fill: #e74c3c;
+	-fx-font-size: 10px;
+	-fx-font-weight: bold;
+	-fx-padding: 3 9 3 9;
+	-fx-background-radius: 4;
+	-fx-border-color: rgba(192, 57, 43, 0.35);
+	-fx-border-radius: 4;
+}
+
+.tag-medium {
+	-fx-background-color: -color-warning-bg;
+	-fx-text-fill: -color-warning;
+	-fx-font-size: 10px;
+	-fx-font-weight: bold;
+	-fx-padding: 3 9 3 9;
+	-fx-background-radius: 4;
+	-fx-border-color: rgba(230, 126, 34, 0.35);
+	-fx-border-radius: 4;
+}
+
+.tag-low {
+	-fx-background-color: -color-success-bg;
+	-fx-text-fill: -color-success;
+	-fx-font-size: 10px;
+	-fx-font-weight: bold;
+	-fx-padding: 3 9 3 9;
+	-fx-background-radius: 4;
+	-fx-border-color: rgba(39, 174, 96, 0.35);
+	-fx-border-radius: 4;
+}
+
+/* ================================================================
+   10. LOGIN
+   ================================================================ */
+.login-root {
+	-fx-background-color: -color-bg-0;
+}
+
+.login-card {
+	-fx-background-color: -color-bg-2;
+	-fx-border-color: -color-border-mid;
+	-fx-border-radius: 10;
+	-fx-background-radius: 10;
+	-fx-padding: 44 44 44 44;
+	-fx-spacing: 16;
+	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.75), 40, 0, 0, 12);
+}
+
+.login-title {
+	-fx-text-fill: -color-gold;
+	-fx-font-size: 24px;
+	-fx-font-weight: bold;
+	-fx-alignment: CENTER;
+	-fx-effect: dropshadow(gaussian, -color-gold-glow, 12, 0, 0, 0);
+}
+
+.login-subtitle {
+	-fx-text-fill: -color-text-3;
+	-fx-font-size: 11px;
+	-fx-alignment: CENTER;
+}
+
+.login-error {
+	-fx-text-fill: -color-danger;
+	-fx-font-size: 11px;
+	-fx-alignment: CENTER;
+}
+
+/* ================================================================
+   11. SCROLLBARS
+   ================================================================ */
+.scroll-bar {
+	-fx-background-color: transparent;
+}
+
+.scroll-bar:vertical {
+	-fx-pref-width: 7px;
+}
+.scroll-bar:horizontal {
+	-fx-pref-height: 7px;
+}
+
+.scroll-bar .thumb {
+	-fx-background-color: -color-border-mid;
+	-fx-background-radius: 4;
+}
+
+.scroll-bar .thumb:hover {
+	-fx-background-color: -color-gold-dim;
+}
+.scroll-bar .thumb:pressed {
+	-fx-background-color: -color-gold;
+}
+
+.scroll-bar .track {
+	-fx-background-color: transparent;
+}
+
+/* Ocultar las flechas de los extremos */
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+	-fx-background-color: transparent;
+	-fx-pref-height: 0;
+	-fx-pref-width: 0;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+	-fx-shape: "";
+	-fx-pref-height: 0;
+	-fx-pref-width: 0;
+}

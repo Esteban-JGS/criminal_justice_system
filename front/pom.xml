@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.fbi</groupId>
+        <artifactId>criminal-justice-system-parent</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <!--
+        Módulo front: cliente de escritorio JavaFX. No tiene lógica de negocio ni datos
+        propios; todo lo pide por HTTP al módulo ws.
+
+            mvn -pl front javafx:run     arranca la app
+            mvn -pl front javafx:jlink   genera el ejecutable independiente
+
+        El WS tiene que estar desplegado antes de arrancar. La URL base se configura en
+        src/main/resources/config/api.properties.
+    -->
+    <artifactId>criminal-justice-system-front</artifactId>
+    <packaging>jar</packaging>
+    <name>Criminal Justice System :: JavaFX Client</name>
+
+    <dependencies>
+        <!-- Los mismos DTOs que usa el WS: el JSON que llega encaja sin traducciones a mano -->
+        <dependency>
+            <groupId>com.fbi</groupId>
+            <artifactId>criminal-justice-system-shared</artifactId>
+        </dependency>
+
+        <!--
+            Jackson: JSON <-> objetos Java en el cliente.
+            El servidor usa JSON-B (viene con Payara); acá hace falta una librería porque
+            una app de escritorio no tiene servidor de aplicaciones que la provea.
+            El cliente HTTP en sí es java.net.http.HttpClient, que ya viene en el JDK.
+        -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.palexdev</groupId>
+            <artifactId>materialfx</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!--
+                =====================================================================
+                CONFIGURACIÓN DE JAVAFX / JLINK (ejecutable independiente)
+                =====================================================================
+                JLink arma un "mini-Java" con solo los módulos que usamos, para que el
+                usuario final no tenga que instalar Java ni Maven.
+            -->
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.fbi.criminal_justice_system.App</mainClass>
+                    <launcher>fbi_system</launcher>
+                    <jlinkImageName>fbi_system_app</jlinkImageName>
+
+                    <!-- Optimizaciones de peso del ejecutable final -->
+                    <noManPages>true</noManPages>
+                    <noHeaderFiles>true</noHeaderFiles>
+                    <stripDebug>true</stripDebug>
+                </configuration>
+                <executions>
+                    <!-- mvn -pl front javafx:run -->
+                    <execution>
+                        <id>default-cli</id>
+                    </execution>
+                    <!-- mvn -pl front javafx:run@debug : espera a que el IDE se conecte al puerto 8000 -->
+                    <execution>
+                        <id>debug</id>
+                        <configuration>
+                            <options>
+                                <option>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=localhost:8000</option>
+                            </options>
+                        </configuration>
+                    </execution>
+                    <!-- Depuración lanzada por el IDE (NetBeans/IntelliJ) -->
+                    <execution>
+                        <id>ide-debug</id>
+                        <configuration>
+                            <options>
+                                <option>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</option>
+                            </options>
+                        </configuration>
+                    </execution>
+                    <!-- Profiling lanzado por el IDE -->
+                    <execution>
+                        <id>ide-profile</id>
+                        <configuration>
+                            <options>
+                                <option>${profiler.jvmargs.arg1}</option>
+                                <option>${profiler.jvmargs.arg2}</option>
+                                <option>${profiler.jvmargs.arg3}</option>
+                                <option>${profiler.jvmargs.arg4}</option>
+                                <option>${profiler.jvmargs.arg5}</option>
+                            </options>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
