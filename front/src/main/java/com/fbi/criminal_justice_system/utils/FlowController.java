@@ -188,7 +188,7 @@ public class FlowController {
 		Scene scene = new Scene(root);
 		MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
 		stage.setScene(scene);
-		applyModalWindowConstraints(this.mainStage); // ← aquí
+		applyModalWindowConstraints(stage);
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.initOwner(parentStage);
 		stage.centerOnScreen();
