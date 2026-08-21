@@ -7,6 +7,7 @@ import com.fbi.cjs.shared.enums.Role;
 import com.fbi.cjs.ws.security.AllowedRoles;
 import com.fbi.cjs.ws.security.Secured;
 import com.fbi.cjs.ws.service.UserService;
+import com.fbi.cjs.ws.security.RequestUser;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -17,6 +18,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -64,15 +66,18 @@ public class UserResource {
 	@PUT
 	@Path("{id}")
 	@AllowedRoles(Role.JEFE_FBI)
-	public ApiResponse<UserDTO> update(@PathParam("id") Long id, @Valid UserDTO user) {
-		return ApiResponse.ok("Usuario actualizado correctamente.", userService.update(id, user));
+	public ApiResponse<UserDTO> update(@PathParam("id") Long id, @Valid UserDTO user,
+			@Context ContainerRequestContext requestContext) {
+
+		UserDTO actingUser = RequestUser.of(requestContext);
+		return ApiResponse.ok("Usuario actualizado correctamente.", userService.update(id, user, actingUser.getId()));
 	}
 
 	@DELETE
 	@Path("{id}")
 	@AllowedRoles(Role.JEFE_FBI)
-	public ApiResponse<Void> delete(@PathParam("id") Long id) {
-		userService.delete(id);
+	public ApiResponse<Void> delete(@PathParam("id") Long id, @Context ContainerRequestContext requestContext) {
+		userService.delete(id, RequestUser.of(requestContext).getId());
 		return ApiResponse.ok("Usuario eliminado correctamente.", null);
 	}
 }
