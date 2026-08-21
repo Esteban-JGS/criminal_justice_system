@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE glassfish-web-app PUBLIC "-//GlassFish.org//DTD GlassFish Application Server 3.1 Servlet 3.0//EN"
+        "https://raw.githubusercontent.com/eclipse-ee4j/glassfish/master/appserver/web/web-glassfish/src/main/resources/glassfish-web-app_3_0-1.dtd">
+<!--
+    Descriptor específico de Payara/GlassFish.
+
+    context-root fija la primera parte de la URL sin importar cómo se llame el
+    .war al desplegarlo:
+        http://localhost:8080/criminal_justice_ws/api/v1/health
+-->
+<glassfish-web-app>
+    <context-root>/criminal_justice_ws</context-root>
+</glassfish-web-app>

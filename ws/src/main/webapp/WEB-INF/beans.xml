@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    beans.xml: activa CDI en el WAR y es el interruptor para cambiar de MOCKS a ORACLE.
+
+    bean-discovery-mode="annotated": solo se registran como beans las clases con
+    anotaciones de scope (@ApplicationScoped, @RequestScoped...). Es el modo por
+    defecto en Jakarta EE 10 y evita registrar clases que no son beans.
+
+    ================== CÓMO PASAR DE MOCKS A ORACLE ==================
+    1. Crear las implementaciones JPA (ej. persistence/JpaCriminalRepository)
+       anotadas con @ApplicationScoped y @Alternative.
+    2. Descomentar el bloque <alternatives> de abajo.
+    3. Redesplegar. Sin tocar servicios ni recursos REST.
+
+    Detalle de CDI: cuando dos beans implementan la misma interfaz habría
+    ambigüedad, pero un @Alternative activado en beans.xml gana siempre sobre el
+    bean normal. Por eso los mocks se quedan como están, sin anotación extra.
+    Ver ws/docs/oracle-migration.md
+-->
+<beans xmlns="https://jakarta.ee/xml/ns/jakartaee"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                           https://jakarta.ee/xml/ns/jakartaee/beans_3_0.xsd"
+       version="3.0"
+       bean-discovery-mode="annotated">
+
+    <!--
+    <alternatives>
+        <class>com.fbi.cjs.ws.persistence.JpaCriminalRepository</class>
+        <class>com.fbi.cjs.ws.persistence.JpaUserRepository</class>
+    </alternatives>
+    -->
+
+</beans>

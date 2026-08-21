@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.fbi</groupId>
+        <artifactId>criminal-justice-system-parent</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <!--
+        Módulo WS: API REST desplegable en Payara.
+
+        <packaging>war</packaging> es lo que hace que el resultado sea un .war, que es
+        lo que Payara despliega.
+
+            ws/target/criminal_justice_ws.war
+            http://localhost:8080/criminal_justice_ws/api/v1
+
+        Las dependencias van en scope "provided" porque Payara ya trae la
+        implementación (Jersey, Weld, Yasson, Hibernate Validator); empaquetarlas
+        provocaría conflictos de clases al desplegar. Es la diferencia con el ejemplo
+        SOAP, que sí incluía Metro en el WAR porque JAX-WS no viene en Jakarta EE.
+    -->
+    <artifactId>criminal-justice-system-ws</artifactId>
+    <packaging>war</packaging>
+    <name>Criminal Justice System :: REST Web Service</name>
+
+    <dependencies>
+        <!-- DTOs compartidos con el front. Esta SÍ se empaqueta dentro del WAR (WEB-INF/lib) -->
+        <dependency>
+            <groupId>com.fbi</groupId>
+            <artifactId>criminal-justice-system-shared</artifactId>
+        </dependency>
+
+        <!--
+            API completa de Jakarta EE 10: JAX-RS, CDI, JSON-B, Bean Validation, JPA, EJB.
+            'provided' = solo compilación; en runtime la pone Payara.
+        -->
+        <dependency>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-api</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <!-- Nombre del .war => define el context-root por defecto del despliegue -->
+        <finalName>criminal_justice_ws</finalName>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <!--
+                        En Jakarta EE 10 el web.xml es opcional: los recursos REST se
+                        descubren por anotaciones (@ApplicationPath + @Path). Sin esta
+                        línea, Maven fallaría por no encontrar WEB-INF/web.xml.
+                    -->
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
