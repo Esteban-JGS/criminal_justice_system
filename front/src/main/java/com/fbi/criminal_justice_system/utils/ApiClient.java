@@ -14,6 +14,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Único punto de salida hacia el web service: URL base, header
@@ -25,6 +27,8 @@ import java.util.Properties;
  * ventana mientras el servidor responde: usar {@link BackgroundTask}.
  */
 public final class ApiClient {
+
+	private static final Logger LOGGER = Logger.getLogger(ApiClient.class.getName());
 
 	private static ApiClient INSTANCE;
 
@@ -174,7 +178,7 @@ public final class ApiClient {
 			}
 		} catch (IOException ex) {
 			// Sin archivo se usan los valores por defecto: no es motivo para no arrancar.
-			System.out.println("No se pudo leer config/api.properties, se usan valores por defecto.");
+			LOGGER.log(Level.WARNING, "No se pudo leer config/api.properties, se usan valores por defecto.");
 		}
 		return properties;
 	}

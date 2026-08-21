@@ -1,9 +1,6 @@
 package com.fbi.criminal_justice_system.utils;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.Properties;
 
 public class AppContext {
 
@@ -11,7 +8,6 @@ public class AppContext {
 	private static HashMap<String, Object> context = new HashMap<>();
 
 	private AppContext() {
-		// cargarPropiedades();
 	}
 
 	private static void createInstance() {
@@ -31,24 +27,6 @@ public class AppContext {
 		return INSTANCE;
 	}
 
-	private void cargarPropiedades() {
-		try {
-			FileInputStream configFile;
-			configFile = new FileInputStream("config/properties.ini");
-			Properties appProperties = new Properties();
-			appProperties.load(configFile);
-			configFile.close();
-			// if (appProperties.getProperty("propiedades.rutalog") != null) {
-			// this.set("rutalog",appProperties.getProperty("propiedades.rutalog"));
-			// }
-			// if (appProperties.getProperty("propiedades.resturl") != null) {
-			// this.set("resturl",appProperties.getProperty("propiedades.resturl"));
-			// }
-		} catch (IOException io) {
-			System.out.println("Archivo de configuración no encontrado.");
-		}
-	}
-
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		throw new CloneNotSupportedException();
@@ -63,7 +41,7 @@ public class AppContext {
 	}
 
 	public void delete(String parameter) {
-		context.put(parameter, null);
+		context.remove(parameter);
 	}
 
 }
