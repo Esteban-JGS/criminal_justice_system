@@ -10,19 +10,6 @@ import jakarta.ws.rs.ext.Provider;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Red de seguridad: cualquier excepción no contemplada termina aquí.
- *
- * <p>
- * Dos cosas importantes:
- * <ul>
- * <li>Las {@link WebApplicationException} (404 de ruta inexistente, 405 de
- * método no permitido...) conservan su código; si no, todo se vería como 500.
- * <li>Al cliente se le manda un mensaje genérico. El stack trace va al log de
- * Payara, nunca en la respuesta: filtrar detalles internos es parte de la
- * seguridad de una API.
- * </ul>
- */
 @Provider
 public class GenericExceptionMapper implements ExceptionMapper<Throwable> {
 

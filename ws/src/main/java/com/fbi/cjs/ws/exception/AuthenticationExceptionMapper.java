@@ -8,13 +8,6 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
-/**
- * Traduce {@link AuthenticationException} a 401.
- *
- * <p>
- * Incluye el header {@code WWW-Authenticate}, que es lo que exige el estándar
- * HTTP al responder 401.
- */
 @Provider
 public class AuthenticationExceptionMapper implements ExceptionMapper<AuthenticationException> {
 

@@ -15,24 +15,13 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * {@link CriminalRepository} en memoria.
- *
- * <p>
- * Al ser {@code @ApplicationScoped} hay una sola instancia para toda la
- * aplicación y varias peticiones pueden entrar a la vez, de ahí las estructuras
- * concurrentes. Lo que entra y sale se copia: devolver la instancia guardada
- * permitiría modificar los datos sin pasar por el repositorio.
- */
 @ApplicationScoped
 public class MockCriminalRepository implements CriminalRepository {
 
 	private final Map<Long, CriminalDTO> store = new ConcurrentHashMap<>();
 
-	/** Hace las veces de la secuencia de Oracle. */
 	private final AtomicLong sequence = new AtomicLong(0);
 
-	/** Público para que las pruebas puedan sembrar los datos sin levantar CDI. */
 	@PostConstruct
 	public void seed() {
 		for (CriminalDTO criminal : MockData.criminals()) {

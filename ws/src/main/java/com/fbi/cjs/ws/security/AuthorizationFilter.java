@@ -17,14 +17,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-/**
- * Aplica {@link AllowedRoles} sobre los recursos {@link Secured}.
- *
- * <p>
- * Corre después de {@link AuthenticationFilter}, así que el usuario ya está
- * identificado. Separar los dos filtros mantiene la distinción de siempre:
- * autenticación es 401 (quién sos), autorización es 403 (podés hacer esto).
- */
 @Secured
 @Provider
 @Priority(Priorities.AUTHORIZATION)

@@ -3,7 +3,6 @@ package com.fbi.cjs.ws.mocks;
 import com.fbi.cjs.ws.repository.CriminalRepository;
 import com.fbi.cjs.ws.repository.CriminalRepositoryContractTest;
 
-/** Aplica el contrato de repositorio a la implementación en memoria. */
 class MockCriminalRepositoryTest extends CriminalRepositoryContractTest {
 
 	@Override

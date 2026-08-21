@@ -12,15 +12,6 @@ import jakarta.ws.rs.core.SecurityContext;
 import jakarta.ws.rs.ext.Provider;
 import java.security.Principal;
 
-/**
- * Valida el token de las peticiones a recursos marcados con {@link Secured}.
- *
- * <p>
- * Espera el header {@code Authorization: Bearer TOKEN}. Si es válido, deja el
- * usuario en la petición ({@link RequestUser}) y reemplaza el
- * {@link SecurityContext}, que es de donde {@link AuthorizationFilter} lee el
- * rol.
- */
 @Secured
 @Provider
 @Priority(Priorities.AUTHENTICATION)
@@ -52,7 +43,6 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 		return header.substring(BEARER_PREFIX.length()).trim();
 	}
 
-	/** Forma estándar de propagar el usuario autenticado dentro de JAX-RS. */
 	private record TokenSecurityContext(UserDTO user, boolean secure) implements SecurityContext {
 
 		@Override

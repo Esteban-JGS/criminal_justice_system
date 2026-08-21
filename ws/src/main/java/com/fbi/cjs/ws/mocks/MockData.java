@@ -8,10 +8,8 @@ import com.fbi.cjs.shared.enums.Role;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Datos iniciales; el equivalente a un script de INSERT de arranque. */
 public final class MockData {
 
-	/** Contraseña de todos los usuarios de prueba. */
 	public static final String DEFAULT_PASSWORD = "1234";
 
 	private MockData() {

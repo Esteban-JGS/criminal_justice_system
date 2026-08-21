@@ -5,15 +5,6 @@ import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;
 import jakarta.ws.rs.ext.Provider;
 
-/**
- * Habilita CORS para clientes que corran en un navegador. El cliente JavaFX no
- * lo necesita —CORS es una política del browser—, pero sí Swagger UI o una
- * pantalla web.
- *
- * <p>
- * El origen {@code *} vale en desarrollo; en producción se lista el dominio
- * exacto del cliente.
- */
 @Provider
 public class CorsFilter implements ContainerResponseFilter {
 

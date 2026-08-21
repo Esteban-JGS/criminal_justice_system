@@ -12,18 +12,6 @@ import jakarta.ws.rs.core.MediaType;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Catálogo de roles: {@code GET /api/v1/roles}.
- *
- * <p>
- * Es de solo lectura porque los roles son un enum del código, no una tabla
- * editable. Sirve para llenar un ComboBox en el front sin que este tenga que
- * hardcodear la lista.
- *
- * <p>
- * Si algún día los roles se administran desde la aplicación, este recurso pasa
- * a tener POST/PUT/DELETE y el enum se convierte en tabla; la URL no cambia.
- */
 @Path(ApiPaths.ROLES)
 @Secured
 @Produces(MediaType.APPLICATION_JSON)

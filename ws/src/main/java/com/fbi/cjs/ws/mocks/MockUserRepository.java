@@ -11,20 +11,12 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * {@link UserRepository} en memoria.
- *
- * <p>
- * Las contraseñas se guardan en texto plano porque son datos de prueba. Con
- * Oracle hay que guardar un hash (BCrypt/Argon2) y comparar hashes.
- */
 @ApplicationScoped
 public class MockUserRepository implements UserRepository {
 
 	private final Map<Long, UserDTO> store = new ConcurrentHashMap<>();
 	private final AtomicLong sequence = new AtomicLong(0);
 
-	/** Público para que las pruebas puedan sembrar los datos sin levantar CDI. */
 	@PostConstruct
 	public void seed() {
 		for (UserDTO user : MockData.users()) {
@@ -74,7 +66,6 @@ public class MockUserRepository implements UserRepository {
 		}
 		UserDTO stored = copy(user);
 		stored.setId(id);
-		// Si el cliente no envía contraseña, se conserva la que ya tenía.
 		if (stored.getPassword() == null || stored.getPassword().isBlank()) {
 			stored.setPassword(current.getPassword());
 		}

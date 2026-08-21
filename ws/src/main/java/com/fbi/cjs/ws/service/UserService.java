@@ -10,22 +10,9 @@ import jakarta.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Reglas de negocio de usuarios.
- *
- * <p>
- * Dos que no puede expresar una anotación de validación, porque necesitan mirar
- * los datos: el {@code username} es único, y nadie puede quitarse a sí mismo el
- * acceso —cambiarse el rol, desactivarse o borrarse— porque el sistema podría
- * quedarse sin ningún jefe.
- */
 @ApplicationScoped
 public class UserService {
 
-	/**
-	 * Sin {@code private} a propósito: así las pruebas del mismo paquete le pueden
-	 * poner un repositorio sin levantar CDI.
-	 */
 	@Inject
 	UserRepository userRepository;
 
@@ -56,18 +43,11 @@ public class UserService {
 		return userRepository.create(user);
 	}
 
-	/**
-	 * @param actingUserId
-	 *            quién está haciendo el cambio, para impedir que se quite a sí
-	 *            mismo el acceso
-	 */
 	public UserDTO update(Long id, UserDTO user, Long actingUserId) {
 		UserDTO current = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Usuario", id));
 
 		user.setUsername(trim(user.getUsername()));
 		user.setName(trim(user.getName()));
-
-		// El username puede repetirse solo si el dueño es este mismo usuario.
 		Optional<UserDTO> owner = userRepository.findByUsername(user.getUsername());
 		if (owner.isPresent() && !owner.get().getId().equals(id)) {
 			throw new BusinessRuleException(ResponseCode.CONFLICT,

@@ -10,11 +10,6 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import java.util.List;
 
-/**
- * Convierte los errores de Bean Validation en un 422 con la lista de campos que
- * fallaron. Sin esto, un {@code @NotBlank} incumplido devuelve un cuerpo enorme
- * y dependiente del servidor.
- */
 @Provider
 public class ConstraintViolationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
 
@@ -29,7 +24,6 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
 				.type(MediaType.APPLICATION_JSON).build();
 	}
 
-	/** Deja "createCriminal.arg0.name" como "name: El nombre es obligatorio". */
 	private String describe(ConstraintViolation<?> violation) {
 		String path = violation.getPropertyPath().toString();
 		int lastDot = path.lastIndexOf('.');

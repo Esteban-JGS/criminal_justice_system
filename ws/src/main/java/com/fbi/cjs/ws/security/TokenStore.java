@@ -11,15 +11,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Emisor y validador de tokens de sesión, en memoria.
- *
- * <p>
- * No es JWT: es un token opaco y aleatorio guardado en un mapa. Se pierde al
- * reiniciar Payara y no serviría con varias instancias del servidor. Para
- * producción, emitir un JWT firmado o mover las sesiones a una tabla; en ambos
- * casos solo cambia esta clase.
- */
 @ApplicationScoped
 public class TokenStore {
 
@@ -45,10 +36,6 @@ public class TokenStore {
 		return new IssuedToken(token, session);
 	}
 
-	/**
-	 * Los tokens vencidos se descartan al consultarlos, así no hace falta un hilo
-	 * barriendo el mapa.
-	 */
 	public Optional<UserDTO> validate(String token) {
 		if (token == null || token.isBlank()) {
 			return Optional.empty();

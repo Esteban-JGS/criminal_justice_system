@@ -9,26 +9,12 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.List;
 
-/**
- * Reglas de negocio de criminales: qué se normaliza y qué se considera "no
- * encontrado". Inyecta la interfaz del repositorio, así que el cambio a Oracle
- * no lo afecta.
- *
- * <p>
- * La versión con JPA necesitará {@code @Transactional} en los métodos que
- * escriben; con datos en memoria no hace falta.
- */
 @ApplicationScoped
 public class CriminalService {
 
-	/**
-	 * Sin {@code private} a propósito: así las pruebas del mismo paquete le pueden
-	 * poner un repositorio sin levantar CDI.
-	 */
 	@Inject
 	CriminalRepository criminalRepository;
 
-	/** Lista con filtros opcionales; si todos son nulos devuelve todo. */
 	public List<CriminalDTO> search(String text, CriminalStatus status, DangerLevel dangerLevel) {
 		if (isBlank(text) && status == null && dangerLevel == null) {
 			return criminalRepository.findAll();
@@ -57,7 +43,6 @@ public class CriminalService {
 		}
 	}
 
-	/** Limpia espacios de sobra para que no entren datos como " Victor ". */
 	private void normalize(CriminalDTO criminal) {
 		criminal.setName(trim(criminal.getName()));
 		criminal.setAlias(trim(criminal.getAlias()));

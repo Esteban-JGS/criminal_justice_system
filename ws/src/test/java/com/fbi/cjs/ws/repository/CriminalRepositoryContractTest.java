@@ -15,21 +15,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-/**
- * Comportamiento que debe cumplir <b>cualquier</b> {@link CriminalRepository},
- * venga de memoria o de Oracle.
- *
- * <p>
- * Al implementar {@code JpaCriminalRepository} basta con crear una subclase que
- * devuelva esa implementación en {@link #newRepository()}: si estas pruebas
- * pasan, la migración no cambió el comportamiento que espera el resto del
- * sistema.
- */
 public abstract class CriminalRepositoryContractTest {
 
 	protected CriminalRepository repository;
 
-	/** Repositorio ya sembrado con los diez criminales de prueba. */
 	protected abstract CriminalRepository newRepository();
 
 	@BeforeEach

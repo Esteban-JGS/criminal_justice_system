@@ -14,14 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-/**
- * Reglas de negocio de criminales.
- *
- * <p>
- * El servicio se arma a mano con un repositorio en memoria: sin CDI, sin
- * servidor y sin red, así estas pruebas corren en milisegundos con
- * {@code mvn test}.
- */
 class CriminalServiceTest {
 
 	private CriminalService service;

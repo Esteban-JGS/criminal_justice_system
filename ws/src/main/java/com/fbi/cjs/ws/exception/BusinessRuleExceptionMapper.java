@@ -6,9 +6,6 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
-/**
- * Traduce {@link BusinessRuleException} al código HTTP que trae la excepción.
- */
 @Provider
 public class BusinessRuleExceptionMapper implements ExceptionMapper<BusinessRuleException> {
 

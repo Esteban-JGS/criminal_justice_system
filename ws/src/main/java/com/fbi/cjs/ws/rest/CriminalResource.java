@@ -30,21 +30,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Criminales.
- *
- * <pre>
- * GET    /criminals        listar (filtros: search, status, dangerLevel)
- * GET    /criminals/{id}   obtener uno
- * POST   /criminals        crear
- * PUT    /criminals/{id}   actualizar
- * DELETE /criminals/{id}   eliminar
- * </pre>
- *
- * <p>
- * {@code @Secured} exige token en toda la clase; {@link AllowedRoles} restringe
- * además por rol lo que modifica datos.
- */
 @Path(ApiPaths.CRIMINALS)
 @Secured
 @Produces(MediaType.APPLICATION_JSON)
@@ -54,10 +39,6 @@ public class CriminalResource {
 	@Inject
 	private CriminalService criminalService;
 
-	/**
-	 * Los filtros van como query params porque no identifican otro recurso: son la
-	 * misma colección, filtrada.
-	 */
 	@GET
 	public ApiResponse<List<CriminalDTO>> list(@QueryParam("search") String search, @QueryParam("status") String status,
 			@QueryParam("dangerLevel") String dangerLevel) {
@@ -74,14 +55,6 @@ public class CriminalResource {
 		return ApiResponse.ok("Criminal encontrado.", criminalService.findById(id));
 	}
 
-	/**
-	 * {@code @Valid} dispara Bean Validation: si el DTO no cumple, la petición no
-	 * llega al servicio y se responde 422.
-	 *
-	 * <p>
-	 * Devuelve 201 con el header {@code Location} del recurso creado, como espera
-	 * el estándar HTTP.
-	 */
 	@POST
 	@AllowedRoles({Role.SUPERVISOR, Role.JEFE_FBI})
 	public Response create(@Valid CriminalDTO criminal, @Context UriInfo uriInfo) {
@@ -106,11 +79,6 @@ public class CriminalResource {
 		return ApiResponse.ok("Criminal eliminado correctamente.", null);
 	}
 
-	/**
-	 * Convierte el filtro a enum. Se hace a mano porque declarar el parámetro como
-	 * enum haría que JAX-RS respondiera 404 ante un valor desconocido, y el recurso
-	 * sí existe: lo inválido es el filtro.
-	 */
 	private <E extends Enum<E>> E parseEnum(Class<E> type, String value, String paramName) {
 		if (value == null || value.isBlank()) {
 			return null;

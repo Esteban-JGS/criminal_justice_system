@@ -9,17 +9,6 @@ import com.fbi.cjs.ws.security.TokenStore;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-/**
- * Autenticación de usuarios.
- *
- * <p>
- * El mensaje de error es el mismo si el usuario no existe o si la contraseña
- * está mal: distinguirlos le confirma a un atacante qué usuarios son válidos.
- *
- * <p>
- * La comparación de contraseñas es literal porque los datos son mocks; con
- * Oracle se compara el hash.
- */
 @ApplicationScoped
 public class AuthService {
 
@@ -39,8 +28,6 @@ public class AuthService {
 		if (Boolean.FALSE.equals(user.getActive())) {
 			throw new AuthenticationException("El usuario está inactivo. Contactá al administrador.");
 		}
-
-		// A partir de aquí el usuario ya no lleva contraseña a ningún lado.
 		user.setPassword(null);
 
 		TokenStore.IssuedToken issued = tokenStore.issue(user);

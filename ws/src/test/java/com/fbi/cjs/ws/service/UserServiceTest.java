@@ -15,13 +15,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-/**
- * Reglas de negocio de usuarios: unicidad del nombre de usuario y la protección
- * contra quedarse sin acceso a uno mismo.
- */
 class UserServiceTest {
 
-	/** Ids de los usuarios sembrados. */
 	private static final long AGENTE = 1L;
 	private static final long JEFE = 3L;
 

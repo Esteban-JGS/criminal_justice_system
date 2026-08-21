@@ -12,14 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-/**
- * Comportamiento que debe cumplir cualquier {@link UserRepository}.
- *
- * <p>
- * Lo más importante que verifica: la contraseña solo sale por
- * {@code findByUsername}, que es lo que usa el login. Si una implementación
- * futura la devolviera en {@code findAll}, terminaría viajando al cliente.
- */
 public abstract class UserRepositoryContractTest {
 
 	protected UserRepository repository;

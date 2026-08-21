@@ -7,14 +7,6 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
-/**
- * Traduce {@link ResourceNotFoundException} a un 404 con el sobre JSON
- * estándar.
- *
- * <p>
- * Gracias a los mappers los recursos REST no llevan try/catch: lanzan la
- * excepción y aquí se arma la respuesta.
- */
 @Provider
 public class ResourceNotFoundExceptionMapper implements ExceptionMapper<ResourceNotFoundException> {
 

@@ -25,13 +25,6 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import java.util.List;
 
-/**
- * Usuarios. Consultar es de supervisores y jefes; administrar, solo del jefe.
- *
- * <p>
- * La contraseña nunca sale en las respuestas. En el PUT es opcional: si no
- * viene, se conserva la actual.
- */
 @Path(ApiPaths.USERS)
 @Secured
 @AllowedRoles({Role.SUPERVISOR, Role.JEFE_FBI})

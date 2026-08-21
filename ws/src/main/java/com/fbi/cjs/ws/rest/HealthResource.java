@@ -10,18 +10,6 @@ import java.time.OffsetDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * Endpoint público de diagnóstico: {@code GET /api/v1/health}.
- *
- * <p>
- * Primer lugar donde mirar cuando "no funciona": si esto responde, el WAR está
- * desplegado y JAX-RS arrancó bien, así que el problema está en la petición, no
- * en el servidor.
- *
- * <p>
- * {@code dataSource: MOCK} recuerda que los datos son de mentira. Cuando se
- * conecte Oracle, ese valor debe pasar a {@code ORACLE}.
- */
 @Path(ApiPaths.HEALTH)
 @Produces(MediaType.APPLICATION_JSON)
 public class HealthResource {

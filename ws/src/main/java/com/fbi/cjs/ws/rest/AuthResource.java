@@ -19,19 +19,6 @@ import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 
-/**
- * Autenticación.
- *
- * <pre>
- * POST /auth/login    público   -> token + usuario
- * POST /auth/logout   con token -> invalida el token
- * GET  /auth/me       con token -> usuario de la sesión
- * </pre>
- *
- * <p>
- * {@code /login} es el único sin {@code @Secured}: pedir token para obtener el
- * token sería un círculo vicioso.
- */
 @Path(ApiPaths.AUTH)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -55,10 +42,6 @@ public class AuthResource {
 		return ApiResponse.ok("Sesión cerrada.", null);
 	}
 
-	/**
-	 * Sirve para saber quién está conectado y para comprobar que el token sigue
-	 * vivo.
-	 */
 	@GET
 	@Path("me")
 	@Secured

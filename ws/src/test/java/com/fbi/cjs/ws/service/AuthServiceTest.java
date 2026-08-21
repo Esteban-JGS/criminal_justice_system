@@ -17,7 +17,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-/** Login, logout y lo que nunca debe salir en la respuesta. */
 class AuthServiceTest {
 
 	private AuthService service;
