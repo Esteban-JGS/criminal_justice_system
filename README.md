@@ -186,10 +186,23 @@ npm run format         # lo mismo, vía npm
 Husky corre Spotless y Biome antes de cada commit, y commitlint valida que el mensaje siga
 Conventional Commits (`feat:`, `fix:`, `docs:`, `refactor:`...).
 
+## Pantallas del cliente
+
+| Pantalla | Qué hace | Quién entra |
+|---|---|---|
+| Login | Autentica contra el WS y guarda el token de la sesión | todos |
+| Dashboard | Datos de la sesión y navegación | todos |
+| Criminales | Listado con búsqueda, alta, edición y borrado | ver: todos · editar: SUPERVISOR, JEFE_FBI · borrar: JEFE_FBI |
+| Búsqueda avanzada | Texto libre combinado con estatus y peligrosidad | todos |
+| Usuarios | Listado con alta, edición y borrado | ver: SUPERVISOR, JEFE_FBI · modificar: JEFE_FBI |
+
+Los botones se deshabilitan según el rol, pero la autorización real la aplica el WS: la
+API responde 403 aunque la petición llegue desde fuera de la aplicación.
+
 ## Estado actual
 
 - API REST completa: auth por token, roles, validación y manejo de errores uniforme.
 - Datos: **mocks en memoria**, se reinician al redesplegar el WAR.
-- Front conectado al WS: login, dashboard y listado de criminales con búsqueda en servidor.
-- Pendiente: formulario de alta/edición de criminales, pantalla de administración de
-  usuarios (el `UserService` del front ya está listo) y la migración a Oracle.
+- Front completo contra el WS: login, dashboard, CRUD de criminales, búsqueda avanzada y
+  administración de usuarios.
+- Pendiente: la migración a Oracle (ver [ws/docs/oracle-migration.md](ws/docs/oracle-migration.md)).
