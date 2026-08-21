@@ -176,6 +176,60 @@ llegar al método.
 | Errores | SOAP Fault | código HTTP + cuerpo JSON |
 | Runtime | Metro empaquetado en el WAR | Jersey, ya incluido en Payara |
 
+## Pruebas
+
+```bash
+mvn test
+```
+
+50 pruebas con JUnit 5, sin necesidad de Payara ni de base de datos: corren en menos de un
+segundo contra los mocks en memoria.
+
+| Dónde | Qué cubre |
+|---|---|
+| `shared` | el sobre `ApiResponse`: códigos, datos y errores de validación |
+| `ws` · repositorios | el contrato de `CriminalRepository` y `UserRepository` |
+| `ws` · servicios | reglas de negocio: unicidad, normalización, 404, auto-bloqueo |
+| `ws` · seguridad | emisión, validación, revocación y vencimiento de tokens |
+
+Las pruebas de repositorio son **contratos abstractos**
+(`CriminalRepositoryContractTest`, `UserRepositoryContractTest`): declaran lo que debe
+cumplir cualquier implementación. Cuando exista `JpaCriminalRepository`, basta con
+extenderlas para comprobar que Oracle se comporta igual que los mocks:
+
+```java
+class JpaCriminalRepositoryTest extends CriminalRepositoryContractTest {
+    @Override
+    protected CriminalRepository newRepository() {
+        return unRepositorioJpaConLosDiezRegistrosDePrueba();
+    }
+}
+```
+
+Los servicios se arman a mano en las pruebas (`service.criminalRepository = ...`), sin CDI.
+Por eso los campos inyectados no son `private`.
+
+## Problemas comunes
+
+**`Application name criminal_justice_ws is already in use` al desplegar.** Pasa si se borró
+el WAR (por ejemplo con `mvn clean`) mientras la aplicación estaba desplegada: queda la
+carpeta sin registro en el dominio. Se resuelve borrándola con el dominio detenido:
+
+```bash
+asadmin stop-domain domain1
+rm -rf "C:/Program Files/Java/payara7/glassfish/domains/domain1/applications/criminal_justice_ws"
+asadmin start-domain domain1
+asadmin deploy ws/target/criminal_justice_ws.war
+```
+
+**`Unable to load class ...Filter` en `server.log`.** Es un aviso del escáner de anotaciones
+del contenedor web, que intenta cargar como filtros de servlet unas clases que son filtros
+de JAX-RS. No afecta: la autenticación y la autorización funcionan (se comprueba con que
+`/criminals` sin token responda 401 y un agente reciba 403 al crear).
+
+**La aplicación de escritorio dice que no se puede conectar.** El WS no está desplegado o
+apunta a otra URL: revisá `GET /api/v1/health` y `front/src/main/resources/config/api.properties`.
+
 ## Herramientas del repo
 
 ```bash
@@ -205,4 +259,5 @@ API responde 403 aunque la petición llegue desde fuera de la aplicación.
 - Datos: **mocks en memoria**, se reinician al redesplegar el WAR.
 - Front completo contra el WS: login, dashboard, CRUD de criminales, búsqueda avanzada y
   administración de usuarios.
+- Pruebas: 50 con JUnit 5 sobre los mocks, ejecutables con `mvn test`.
 - Pendiente: la migración a Oracle (ver [ws/docs/oracle-migration.md](ws/docs/oracle-migration.md)).
