@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Criminal Justice System — API REST</title>
+    <style>
+        :root { color-scheme: light dark; }
+        body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 0 auto; max-width: 52rem; padding: 2rem 1.25rem; line-height: 1.6; }
+        h1 { margin-bottom: .25rem; }
+        p.lead { margin-top: 0; opacity: .75; }
+        table { border-collapse: collapse; width: 100%; margin: 1rem 0 2rem; }
+        th, td { text-align: left; padding: .5rem .6rem; border-bottom: 1px solid rgba(128,128,128,.35); vertical-align: top; }
+        th { font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; opacity: .7; }
+        code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .9em; }
+        .m { font-weight: 700; }
+        .badge { font-size: .75rem; border: 1px solid rgba(128,128,128,.5); border-radius: 999px; padding: 0 .5rem; white-space: nowrap; }
+    </style>
+</head>
+<body>
+    <h1>Criminal Justice System</h1>
+    <p class="lead">API REST (JAX-RS) desplegada en Payara. Base: <code>/criminal_justice_ws/api/v1</code></p>
+
+    <p>Empezá por <a href="api/v1/health"><code>GET /api/v1/health</code></a>: es público y confirma que el despliegue funciona.</p>
+
+    <h2>Endpoints</h2>
+    <table>
+        <thead>
+            <tr><th>Método</th><th>Ruta</th><th>Acceso</th><th>Descripción</th></tr>
+        </thead>
+        <tbody>
+            <tr><td class="m">GET</td><td><code>/health</code></td><td><span class="badge">público</span></td><td>Estado del servicio</td></tr>
+            <tr><td class="m">POST</td><td><code>/auth/login</code></td><td><span class="badge">público</span></td><td>Devuelve token + usuario</td></tr>
+            <tr><td class="m">POST</td><td><code>/auth/logout</code></td><td><span class="badge">token</span></td><td>Invalida el token</td></tr>
+            <tr><td class="m">GET</td><td><code>/auth/me</code></td><td><span class="badge">token</span></td><td>Usuario de la sesión</td></tr>
+            <tr><td class="m">GET</td><td><code>/criminals</code></td><td><span class="badge">token</span></td><td>Listar. Filtros: <code>search</code>, <code>status</code>, <code>dangerLevel</code></td></tr>
+            <tr><td class="m">GET</td><td><code>/criminals/{id}</code></td><td><span class="badge">token</span></td><td>Obtener uno</td></tr>
+            <tr><td class="m">POST</td><td><code>/criminals</code></td><td><span class="badge">SUPERVISOR · JEFE_FBI</span></td><td>Crear</td></tr>
+            <tr><td class="m">PUT</td><td><code>/criminals/{id}</code></td><td><span class="badge">SUPERVISOR · JEFE_FBI</span></td><td>Actualizar</td></tr>
+            <tr><td class="m">DELETE</td><td><code>/criminals/{id}</code></td><td><span class="badge">JEFE_FBI</span></td><td>Eliminar</td></tr>
+            <tr><td class="m">GET</td><td><code>/users</code></td><td><span class="badge">SUPERVISOR · JEFE_FBI</span></td><td>Listar usuarios</td></tr>
+            <tr><td class="m">GET</td><td><code>/users/{id}</code></td><td><span class="badge">SUPERVISOR · JEFE_FBI</span></td><td>Obtener uno</td></tr>
+            <tr><td class="m">POST</td><td><code>/users</code></td><td><span class="badge">JEFE_FBI</span></td><td>Crear</td></tr>
+            <tr><td class="m">PUT</td><td><code>/users/{id}</code></td><td><span class="badge">JEFE_FBI</span></td><td>Actualizar</td></tr>
+            <tr><td class="m">DELETE</td><td><code>/users/{id}</code></td><td><span class="badge">JEFE_FBI</span></td><td>Eliminar</td></tr>
+            <tr><td class="m">GET</td><td><code>/roles</code></td><td><span class="badge">token</span></td><td>Catálogo de roles</td></tr>
+        </tbody>
+    </table>
+
+    <h2>Usuarios de prueba</h2>
+    <p>Contraseña para todos: <code>1234</code></p>
+    <table>
+        <thead><tr><th>Usuario</th><th>Rol</th></tr></thead>
+        <tbody>
+            <tr><td><code>agente01</code></td><td>AGENTE</td></tr>
+            <tr><td><code>supervisor01</code></td><td>SUPERVISOR</td></tr>
+            <tr><td><code>jefe01</code></td><td>JEFE_FBI</td></tr>
+        </tbody>
+    </table>
+
+    <p><strong>Datos actuales: mocks en memoria.</strong> Se reinician cada vez que se redespliega el WAR.</p>
+</body>
+</html>
