@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <!--
@@ -33,13 +32,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <!--
-            Versión de Java de TODO el monorepo.
-            OJO: Payara 6 está certificado hasta Java 21. Si tu dominio de Payara corre
-            sobre un JDK menor a 25, el WAR no va a desplegar ("Unsupported class file
-            major version"). Solución: bajar esta propiedad a 21 y recompilar; no hay
-            que tocar ninguna otra cosa del código.
-        -->
         <java.version>25</java.version>
 
         <!-- Versiones centralizadas -->
@@ -60,19 +52,12 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- Módulo compartido: DTOs y enums que viajan por JSON entre ws y front -->
             <dependency>
                 <groupId>com.fbi</groupId>
                 <artifactId>criminal-justice-system-shared</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
-            <!--
-                API completa de Jakarta EE 10. Scope 'provided' = solo para compilar;
-                la implementación real (JAX-RS/Jersey, CDI/Weld, JPA/EclipseLink) ya
-                viene dentro de Payara. Si la empaquetáramos en el WAR habría choques
-                de clases al desplegar.
-            -->
             <dependency>
                 <groupId>jakarta.platform</groupId>
                 <artifactId>jakarta.jakartaee-api</artifactId>
@@ -80,17 +65,12 @@
                 <scope>provided</scope>
             </dependency>
 
-            <!-- JSON en el cliente JavaFX (el servidor usa el JSON-B que trae Payara) -->
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
 
-            <!--
-                JUnit 5 para las pruebas de los tres módulos. El BOM alinea las versiones
-                de junit-jupiter, junit-platform y compañía.
-            -->
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
@@ -99,7 +79,6 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- JavaFX -->
             <dependency>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-controls</artifactId>
@@ -158,13 +137,6 @@
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
 
-            <!--
-                =====================================================================
-                FORMATO DE CÓDIGO (Spotless) — corre sobre TODO el monorepo
-                =====================================================================
-                mvn spotless:apply   -> formatea
-                mvn spotless:check   -> falla si algo está mal formateado (útil en CI)
-            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -176,7 +148,6 @@
                 <version>${spotless.plugin.version}</version>
                 <configuration>
                     <java>
-                        <!-- Eclipse formatter: los basados en javac fallan con Java 25 -->
                         <eclipse>
                             <version>4.30</version>
                         </eclipse>
