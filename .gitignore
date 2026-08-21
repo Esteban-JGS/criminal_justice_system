@@ -81,3 +81,5 @@ node_modules/
 # Proyecto SOAP de referencia: se conserva en local, fuera del control de versiones.
 # Tiene credenciales de Gmail hardcodeadas en util/Mailservice.java y no es parte del build.
 ejemplo-TareaProgra3WS-main/
+
+ws/docs/oracle_schema.md
