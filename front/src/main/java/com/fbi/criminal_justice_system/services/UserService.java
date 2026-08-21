@@ -26,11 +26,6 @@ public class UserService {
 		});
 	}
 
-	public UserDTO findById(Long id) {
-		return apiClient.get(RESOURCE + "/" + id, new TypeReference<ApiResponse<UserDTO>>() {
-		});
-	}
-
 	/** Solo JEFE_FBI. La contraseña es obligatoria al crear. */
 	public UserDTO create(UserDTO user) {
 		return apiClient.post(RESOURCE, user, new TypeReference<ApiResponse<UserDTO>>() {

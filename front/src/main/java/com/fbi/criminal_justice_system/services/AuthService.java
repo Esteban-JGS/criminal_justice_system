@@ -57,10 +57,4 @@ public class AuthService {
 			Session.clear();
 		}
 	}
-
-	/** Confirma contra el WS que el token sigue vivo. */
-	public UserDTO me() {
-		return apiClient.get("/auth/me", new TypeReference<ApiResponse<UserDTO>>() {
-		});
-	}
 }

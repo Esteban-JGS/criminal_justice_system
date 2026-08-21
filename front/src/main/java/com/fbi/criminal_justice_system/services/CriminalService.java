@@ -56,11 +56,6 @@ public class CriminalService {
 		});
 	}
 
-	public CriminalDTO findById(Long id) {
-		return apiClient.get(RESOURCE + "/" + id, new TypeReference<ApiResponse<CriminalDTO>>() {
-		});
-	}
-
 	/** Requiere rol SUPERVISOR o JEFE_FBI; si no, el WS responde 403. */
 	public CriminalDTO create(CriminalDTO criminal) {
 		return apiClient.post(RESOURCE, criminal, new TypeReference<ApiResponse<CriminalDTO>>() {

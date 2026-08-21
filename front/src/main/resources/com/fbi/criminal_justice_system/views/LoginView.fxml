@@ -29,7 +29,7 @@
             <PasswordField fx:id="txtPassword" maxHeight="50.0" maxWidth="300.0" minHeight="40.0" minWidth="300.0" promptText="Contraseña del Usuario" styleClass="text-field" />
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
                <children>
-                  <Button fx:id="btnHepl" maxHeight="50.0" maxWidth="150.0" minHeight="50.0" minWidth="150.0" mnemonicParsing="false" styleClass="btn-secondary" text="Ayuda" />
+                  <Button fx:id="btnHelp" maxHeight="50.0" maxWidth="150.0" minHeight="50.0" minWidth="150.0" mnemonicParsing="false" onAction="#onActionBtnHelp" styleClass="btn-secondary" text="Ayuda" />
                   <Button fx:id="btnEnter" maxHeight="50.0" maxWidth="150.0" minHeight="50.0" minWidth="150.0" mnemonicParsing="false" onAction="#onActionBtnEnter" styleClass="btn-primary" text="Entrar" />
                </children>
             </HBox>
