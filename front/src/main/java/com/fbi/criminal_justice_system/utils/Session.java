@@ -3,14 +3,6 @@ package com.fbi.criminal_justice_system.utils;
 import com.fbi.cjs.shared.dto.UserDTO;
 import com.fbi.cjs.shared.enums.Role;
 
-/**
- * Sesión del usuario conectado: token y datos.
- *
- * <p>
- * Se apoya en {@link AppContext} para que el estado compartido viva en un solo
- * lugar. El token queda solo en memoria: guardarlo en disco obligaría a
- * cifrarlo.
- */
 public final class Session {
 
 	private static final String TOKEN_KEY = "session.token";
@@ -41,7 +33,6 @@ public final class Session {
 		return getToken() != null && getUser() != null;
 	}
 
-	/** {@code true} si el usuario conectado tiene alguno de los roles indicados. */
 	public static boolean hasAnyRole(Role... roles) {
 		UserDTO user = getUser();
 		if (user == null || user.getRole() == null) {

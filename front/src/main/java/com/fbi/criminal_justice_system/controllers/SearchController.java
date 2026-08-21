@@ -1,4 +1,3 @@
-// SearchController.java
 package com.fbi.criminal_justice_system.controllers;
 
 import com.fbi.cjs.shared.dto.CriminalDTO;
@@ -21,15 +20,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 
-/**
- * Búsqueda avanzada de criminales: texto libre combinado con estatus y
- * peligrosidad.
- *
- * <p>
- * Los tres filtros se mandan como query params y los resuelve el WS. Filtrar en
- * el cliente obligaría a traerse la tabla entera en cada consulta, que con diez
- * registros da igual y con cien mil no.
- */
 public class SearchController extends Controller {
 
 	@FXML
@@ -62,7 +52,6 @@ public class SearchController extends Controller {
 	private final CriminalService criminalService = new CriminalService();
 	private final ObservableList<CriminalDTO> results = FXCollections.observableArrayList();
 
-	/** Descarta respuestas de búsquedas que quedaron viejas. */
 	private final RequestGuard requestGuard = new RequestGuard();
 
 	@Override
@@ -74,8 +63,6 @@ public class SearchController extends Controller {
 				"Todos");
 		ComboBoxUtils.configureWithAllOption(cmbDangerLevel, List.of(DangerLevel.values()), DangerLevel::getLabel,
 				"Todas");
-
-		// Enter en el campo de texto equivale a pulsar Buscar.
 		txtSearchText.setOnAction(event -> search());
 	}
 

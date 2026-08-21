@@ -9,34 +9,16 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.util.StringConverter;
 
-/**
- * Combos que guardan un objeto del dominio y muestran una etiqueta legible.
- *
- * <p>
- * Con esto el valor seleccionado es siempre un enum o un DTO válido: el usuario
- * no puede escribir un estado inexistente, y al WS nunca le llega texto libre
- * donde espera un valor del catálogo.
- */
 public final class ComboBoxUtils {
 
 	private ComboBoxUtils() {
 	}
 
-	/**
-	 * @param labelOf
-	 *            cómo se muestra cada elemento, tanto en la lista como una vez
-	 *            seleccionado
-	 */
 	public static <E> void configure(ComboBox<E> combo, Collection<E> items, Function<E, String> labelOf) {
 		combo.setItems(FXCollections.observableArrayList(items));
 		applyLabels(combo, labelOf, "");
 	}
 
-	/**
-	 * Igual que {@link #configure}, más una opción inicial que representa "sin
-	 * filtro" y vale {@code null}. Para pantallas de búsqueda, donde hay que poder
-	 * volver a "todos" después de haber elegido algo.
-	 */
 	public static <E> void configureWithAllOption(ComboBox<E> combo, Collection<E> items, Function<E, String> labelOf,
 			String allLabel) {
 

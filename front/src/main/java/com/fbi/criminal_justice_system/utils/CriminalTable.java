@@ -8,14 +8,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 
-/**
- * Configuración de las columnas de una tabla de criminales.
- *
- * <p>
- * La usan el listado y la búsqueda avanzada, que muestran exactamente las
- * mismas columnas; tenerla acá evita que las dos pantallas se vayan separando
- * con el tiempo.
- */
 public final class CriminalTable {
 
 	private CriminalTable() {
@@ -24,10 +16,6 @@ public final class CriminalTable {
 	public static void configureColumns(TableColumn<CriminalDTO, Long> colId, TableColumn<CriminalDTO, String> colName,
 			TableColumn<CriminalDTO, String> colAlias, TableColumn<CriminalDTO, String> colCrime,
 			TableColumn<CriminalDTO, DangerLevel> colDangerLevel, TableColumn<CriminalDTO, String> colStatus) {
-
-		// Lambdas en vez de PropertyValueFactory: la fábrica busca el getter por
-		// reflexión y, si el nombre no coincide, la columna sale vacía sin error
-		// alguno.
 		colId.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().getId()));
 		colName.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getName()));
 		colAlias.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getAlias()));
@@ -39,7 +27,6 @@ public final class CriminalTable {
 		colDangerLevel.setCellFactory(column -> new DangerLevelCell());
 	}
 
-	/** Pinta la peligrosidad como etiqueta de color, con los estilos del tema. */
 	private static class DangerLevelCell extends TableCell<CriminalDTO, DangerLevel> {
 
 		@Override

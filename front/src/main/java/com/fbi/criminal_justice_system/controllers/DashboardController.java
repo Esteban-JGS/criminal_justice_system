@@ -1,4 +1,3 @@
-// DashboardController.java
 package com.fbi.criminal_justice_system.controllers;
 
 import com.fbi.cjs.shared.dto.UserDTO;
@@ -14,16 +13,6 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-/**
- * Pantalla principal: barra superior con los datos de la sesión y navegación
- * hacia las demás vistas.
- *
- * <p>
- * Toma el usuario de {@link Session}. Antes dependía de que alguien llamara
- * {@code initData(user)}, pero {@code FlowController.goMain()} carga el FXML
- * sin pasar por el controlador, así que los labels se quedaban con el texto de
- * ejemplo.
- */
 public class DashboardController extends Controller {
 
 	@FXML
@@ -45,7 +34,6 @@ public class DashboardController extends Controller {
 
 	private final AuthService authService = new AuthService();
 
-	/** JavaFX llama este método al cargar el FXML, con los @FXML ya inyectados. */
 	@Override
 	public void initialize() {
 		imgFbiImage.setImage(new Image(
@@ -53,7 +41,6 @@ public class DashboardController extends Controller {
 
 		UserDTO user = Session.getUser();
 		if (user == null) {
-			// Defensa por si se abre el dashboard sin sesión (no debería pasar).
 			lblAgent.setText("Agente: —");
 			lblRol.setText("Sin sesión");
 			lblWelcome.setText("No hay una sesión activa. Volvé a iniciar sesión.");
@@ -64,8 +51,6 @@ public class DashboardController extends Controller {
 		lblAgent.setText("Agente: " + user.getName());
 		lblRol.setText(user.getRole() == null ? "" : user.getRole().getLabel());
 		lblWelcome.setText("Bienvenido al sistema, " + user.getName() + ".\nSeleccioná una opción del menú.");
-
-		// Administrar usuarios es de supervisores y jefes: al agente ni se le muestra.
 		boolean canSeeUsers = Session.hasAnyRole(Role.SUPERVISOR, Role.JEFE_FBI);
 		btnUsers.setVisible(canSeeUsers);
 		btnUsers.setManaged(canSeeUsers);
@@ -91,10 +76,6 @@ public class DashboardController extends Controller {
 		FlowController.getInstance().goView("UserView");
 	}
 
-	/**
-	 * Cierra sesión. Primero se abre el login y después se avisa al servidor: si el
-	 * WS no responde, el usuario igual queda fuera de la aplicación.
-	 */
 	@FXML
 	private void onActionBtnLogOut(ActionEvent event) {
 		BackgroundTask.run(() -> {

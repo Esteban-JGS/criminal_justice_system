@@ -1,4 +1,3 @@
-// LoginController.java
 package com.fbi.criminal_justice_system.controllers;
 
 import com.fbi.criminal_justice_system.services.AuthService;
@@ -13,13 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-/**
- * Pantalla de login.
- *
- * <p>
- * Las credenciales las valida el web service. El front solo revisa que los
- * campos no estén vacíos, para no gastar una llamada de red en algo evidente.
- */
 public class LoginController extends Controller {
 
 	@FXML
@@ -56,9 +48,6 @@ public class LoginController extends Controller {
 		}
 
 		setLoading(true);
-
-		// El login viaja por red: si se hiciera en el hilo de JavaFX, la ventana se
-		// quedaría congelada hasta que Payara conteste (o hasta que expire el timeout).
 		BackgroundTask.run(() -> authService.login(username, password), user -> {
 			setLoading(false);
 			openDashboard();
@@ -68,10 +57,6 @@ public class LoginController extends Controller {
 		});
 	}
 
-	/**
-	 * Ayuda para diagnosticar el problema más común: el servidor no está levantado
-	 * o la URL apunta a otro lado.
-	 */
 	@FXML
 	private void onActionBtnHelp(ActionEvent event) {
 		mensaje.showModal(AlertType.INFORMATION, "Ayuda", stage,
@@ -80,10 +65,6 @@ public class LoginController extends Controller {
 						+ "Servidor configurado: " + ApiClient.getInstance().getBaseUrl());
 	}
 
-	/**
-	 * Mientras se consulta al servidor, el botón se bloquea para evitar dobles
-	 * envíos.
-	 */
 	private void setLoading(boolean loading) {
 		btnEnter.setDisable(loading);
 		btnEnter.setText(loading ? "Verificando..." : "Entrar");

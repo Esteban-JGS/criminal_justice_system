@@ -6,13 +6,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Window;
 
-/**
- * Diálogos de la aplicación.
- *
- * <p>
- * Las versiones modales bloquean hasta que el usuario responde, así que solo
- * sirven para avisos y confirmaciones; nunca para esperar al servidor.
- */
 public class Mensaje {
 
 	public void show(AlertType tipo, String titulo, String mensaje) {

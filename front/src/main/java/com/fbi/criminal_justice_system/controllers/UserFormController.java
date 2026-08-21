@@ -1,4 +1,3 @@
-// UserFormController.java
 package com.fbi.criminal_justice_system.controllers;
 
 import com.fbi.cjs.shared.dto.RoleDTO;
@@ -17,24 +16,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-/**
- * Formulario de alta y edición de usuarios, en ventana modal.
- *
- * <p>
- * Los roles se cargan del catálogo del WS ({@code GET /roles}) y no de una
- * lista escrita acá: si mañana aparece un rol nuevo, esta pantalla lo muestra
- * sin recompilar.
- *
- * <p>
- * En edición la contraseña es opcional; dejarla vacía conserva la actual. El WS
- * nunca devuelve la contraseña, así que no hay nada que precargar.
- */
 public class UserFormController extends Controller {
 
-	/** Usuario a editar; {@code null} para crear uno nuevo. */
 	public static final String CONTEXT_SELECTED = "user.selected";
 
-	/** Lo pone en {@code true} el guardado exitoso. */
 	public static final String CONTEXT_SAVED = "user.saved";
 
 	@FXML
@@ -103,12 +88,6 @@ public class UserFormController extends Controller {
 		txtName.requestFocus();
 	}
 
-	/**
-	 * El catálogo viene del servidor. Se pide una sola vez: el controlador queda
-	 * cacheado por el FlowController y conserva los roles mientras la aplicación
-	 * esté abierta. Hasta que lleguen no se puede guardar, porque sin rol la
-	 * petición sería inválida.
-	 */
 	private void loadRoles() {
 		if (!cmbRole.getItems().isEmpty()) {
 			selectCurrentRole(cmbRole.getItems());
@@ -164,7 +143,6 @@ public class UserFormController extends Controller {
 		stage.close();
 	}
 
-	/** En edición, contraseña vacía significa "no la cambies". */
 	private String passwordOrNull() {
 		String password = txtPassword.getText();
 		return password == null || password.isBlank() ? null : password;

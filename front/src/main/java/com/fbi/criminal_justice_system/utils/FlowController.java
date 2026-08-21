@@ -18,7 +18,6 @@ import javafx.stage.WindowEvent;
 import com.fbi.criminal_justice_system.controllers.Controller;
 import io.github.palexdev.materialfx.css.themes.MFXThemeManager;
 import io.github.palexdev.materialfx.css.themes.Themes;
-import javafx.scene.layout.HBox;
 
 public class FlowController {
 
@@ -102,13 +101,11 @@ public class FlowController {
 	public void goView(String viewName, String location, String accion) {
 		FXMLLoader loader = getLoader(viewName);
 		Controller controller = loader.getController();
-		// controller.setAccion(accion);
 		Stage stage = controller.getStage();
 		if (stage == null) {
 			stage = this.mainStage;
 			controller.setStage(stage);
 		}
-		// Con el stage ya asignado: el controlador puede abrir diálogos desde aquí.
 		controller.onViewShown();
 		switch (location) {
 			case "Center" :
@@ -118,24 +115,6 @@ public class FlowController {
 				vBox.getChildren().clear();
 				vBox.getChildren().add(loader.getRoot());
 
-				/*
-				 * VBox vBox = ((VBox) ((BorderPane) stage.getScene().getRoot()).getCenter());
-				 * vBox.getChildren().clear(); vBox.getChildren().add(loader.getRoot());
-				 */
-				break;
-			case "Top" :
-				BorderPane borderPane2 = (BorderPane) stage.getScene().getRoot();
-				HBox hBox = (HBox) borderPane2.getTop();
-				hBox.getChildren().clear();
-				hBox.getChildren().add(loader.getRoot());
-				break;
-			case "Bottom" :
-				break;
-			case "Right" :
-				break;
-			case "Left" :
-				break;
-			default :
 				break;
 		}
 	}
@@ -159,8 +138,6 @@ public class FlowController {
 			controller.setStage(null);
 		});
 		controller.setStage(stage);
-		// onViewShown antes del título: el controlador puede cambiarlo según lo que
-		// cargue.
 		controller.onViewShown();
 		stage.setTitle(controller.getNombreVista());
 		Parent root = loader.getRoot();

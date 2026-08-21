@@ -1,4 +1,3 @@
-// CriminalController.java
 package com.fbi.criminal_justice_system.controllers;
 
 import com.fbi.cjs.shared.dto.CriminalDTO;
@@ -24,11 +23,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.util.Duration;
 
-/**
- * Listado de criminales y punto de entrada al alta, edición y borrado. No sabe
- * de HTTP ni de JSON: le pide datos a {@link CriminalService} y pinta lo que
- * recibe.
- */
 public class CriminalController extends Controller {
 
 	@FXML
@@ -58,16 +52,10 @@ public class CriminalController extends Controller {
 
 	private final CriminalService criminalService = new CriminalService();
 
-	/** La tabla observa esta lista: al reemplazar su contenido se repinta sola. */
 	private final ObservableList<CriminalDTO> criminals = FXCollections.observableArrayList();
 
-	/**
-	 * Espera a que el usuario deje de escribir antes de consultar el servidor. Sin
-	 * esto, "salazar" dispararía siete peticiones, una por letra.
-	 */
 	private final PauseTransition searchDebounce = new PauseTransition(Duration.millis(350));
 
-	/** Descarta respuestas de búsquedas que quedaron viejas. */
 	private final RequestGuard requestGuard = new RequestGuard();
 
 	@Override
@@ -91,10 +79,6 @@ public class CriminalController extends Controller {
 		return "Criminales";
 	}
 
-	/**
-	 * Un agente consulta pero no modifica. El WS igual rechaza la petición con 403;
-	 * deshabilitar los botones es para no ofrecer algo que va a fallar.
-	 */
 	private void configurePermissions() {
 		boolean canEdit = Session.hasAnyRole(Role.SUPERVISOR, Role.JEFE_FBI);
 		btnAddCriminal.setDisable(!canEdit);
@@ -102,10 +86,6 @@ public class CriminalController extends Controller {
 		btnDeleteCriminal.setDisable(!Session.hasAnyRole(Role.JEFE_FBI));
 	}
 
-	/**
-	 * Carga la tabla desde el WS en otro hilo, para que la ventana siga
-	 * respondiendo mientras el servidor contesta.
-	 */
 	private void loadData() {
 		String filter = txtSearchCriminal.getText();
 		long ticket = requestGuard.next();
@@ -186,10 +166,6 @@ public class CriminalController extends Controller {
 		return selected;
 	}
 
-	/**
-	 * Abre el formulario modal y recarga la tabla si guardó. Modal a propósito: no
-	 * tiene sentido editar dos criminales a la vez ni dejar la tabla desfasada.
-	 */
 	private void openForm(CriminalDTO criminal) {
 		AppContext.getInstance().set(CriminalFormController.CONTEXT_SELECTED, criminal);
 		FlowController.getInstance().goViewInWindowModal("CriminalFormView", stage, false);

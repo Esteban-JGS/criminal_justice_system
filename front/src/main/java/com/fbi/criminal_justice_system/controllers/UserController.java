@@ -1,4 +1,3 @@
-// UserController.java
 package com.fbi.criminal_justice_system.controllers;
 
 import com.fbi.cjs.shared.dto.UserDTO;
@@ -20,14 +19,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
-/**
- * Administración de usuarios.
- *
- * <p>
- * Consultar es de supervisores y jefes; crear, editar y eliminar, solo del
- * jefe. Los botones se deshabilitan según el rol, pero quien manda es el WS:
- * responde 403 igual aunque alguien llame la API por fuera de esta pantalla.
- */
 public class UserController extends Controller {
 
 	@FXML
@@ -134,8 +125,6 @@ public class UserController extends Controller {
 		if (selected == null) {
 			return;
 		}
-
-		// El WS también lo rechaza; acá se evita el viaje y se explica mejor.
 		UserDTO current = Session.getUser();
 		if (current != null && current.getId().equals(selected.getId())) {
 			mensaje.showModal(AlertType.WARNING, "Eliminar usuario", stage,

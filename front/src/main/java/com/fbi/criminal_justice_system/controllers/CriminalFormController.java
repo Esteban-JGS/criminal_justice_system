@@ -1,4 +1,3 @@
-// CriminalFormController.java
 package com.fbi.criminal_justice_system.controllers;
 
 import com.fbi.cjs.shared.dto.CriminalDTO;
@@ -16,24 +15,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
-/**
- * Formulario de registro y edición de criminales, en ventana modal.
- *
- * <p>
- * Sirve para las dos operaciones: si {@link AppContext} trae un criminal en
- * {@link #CONTEXT_SELECTED} edita, y si no, registra. Un solo formulario para
- * ambas evita duplicar validaciones y campos.
- *
- * <p>
- * Al guardar deja {@link #CONTEXT_SAVED} en el contexto para que la pantalla
- * que lo abrió sepa si tiene que recargar la tabla.
- */
 public class CriminalFormController extends Controller {
 
-	/** Criminal a editar; {@code null} para registrar uno nuevo. */
 	public static final String CONTEXT_SELECTED = "criminal.selected";
 
-	/** Lo pone en {@code true} el guardado exitoso. */
 	public static final String CONTEXT_SAVED = "criminal.saved";
 
 	@FXML
@@ -57,7 +42,6 @@ public class CriminalFormController extends Controller {
 
 	private final CriminalService criminalService = new CriminalService();
 
-	/** El que se está editando; {@code null} en modo registro. */
 	private CriminalDTO editing;
 
 	@Override
@@ -76,7 +60,6 @@ public class CriminalFormController extends Controller {
 		return editing == null ? "Registrar Criminal" : "Editar Criminal";
 	}
 
-	/** Carga los datos del criminal seleccionado, o limpia todo si es uno nuevo. */
 	private void loadSelection() {
 		editing = (CriminalDTO) AppContext.getInstance().get(CONTEXT_SELECTED);
 		AppContext.getInstance().delete(CONTEXT_SAVED);
@@ -124,8 +107,6 @@ public class CriminalFormController extends Controller {
 				}, failure -> {
 					setLoading(false);
 					if (isUnauthorized(failure)) {
-						// Primero se cierra el formulario: no tiene sentido dejarlo abierto
-						// encima del login.
 						stage.close();
 						handleExpiredSession(failure);
 						return;
@@ -139,10 +120,6 @@ public class CriminalFormController extends Controller {
 		stage.close();
 	}
 
-	/**
-	 * Validación local de lo evidente, para no gastar una llamada de red. El WS
-	 * revalida igual: lo que valida solo el cliente no está validado.
-	 */
 	private String validate() {
 		if (txtName.getText() == null || txtName.getText().isBlank()) {
 			return "El nombre es obligatorio.";
