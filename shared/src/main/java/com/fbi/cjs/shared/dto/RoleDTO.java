@@ -2,10 +2,6 @@ package com.fbi.cjs.shared.dto;
 
 import com.fbi.cjs.shared.enums.Role;
 
-/**
- * Rol como elemento de catálogo: el valor que se envía a la API y el texto que
- * se muestra en un ComboBox del front.
- */
 public class RoleDTO {
 
 	private Role value;

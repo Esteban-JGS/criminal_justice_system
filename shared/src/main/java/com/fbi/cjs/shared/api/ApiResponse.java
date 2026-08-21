@@ -2,27 +2,6 @@ package com.fbi.cjs.shared.api;
 
 import java.util.List;
 
-/**
- * Sobre estándar de toda respuesta de la API:
- *
- * <pre>
- * {
- *   "status": 200,
- *   "code": "OK",
- *   "message": "Criminales obtenidos correctamente",
- *   "data": [ ... ],
- *   "errors": null,
- *   "success": true
- * }
- * </pre>
- *
- * <p>
- * Que la forma sea siempre la misma deja un único punto en el cliente donde
- * interpretar respuestas, en vez de un parseo distinto por endpoint.
- *
- * @param <T>
- *            tipo del contenido de {@code data}
- */
 public class ApiResponse<T> {
 
 	private int status;
@@ -30,12 +9,8 @@ public class ApiResponse<T> {
 	private String message;
 	private T data;
 
-	/** Detalle de errores de validación. Es {@code null} cuando todo salió bien. */
 	private List<String> errors;
 
-	/**
-	 * Constructor vacío: obligatorio para que JSON-B y Jackson puedan instanciarlo.
-	 */
 	public ApiResponse() {
 	}
 
@@ -46,8 +21,6 @@ public class ApiResponse<T> {
 		this.data = data;
 		this.errors = errors;
 	}
-
-	// Fábricas: se leen mejor en los resources que un constructor de 4 argumentos.
 
 	public static <T> ApiResponse<T> ok(String message, T data) {
 		return new ApiResponse<>(ResponseCode.OK, message, data, null);
@@ -65,7 +38,6 @@ public class ApiResponse<T> {
 		return new ApiResponse<>(code, message, null, errors);
 	}
 
-	/** {@code true} si la operación fue exitosa (HTTP 2xx). */
 	public boolean isSuccess() {
 		return status >= 200 && status < 300;
 	}

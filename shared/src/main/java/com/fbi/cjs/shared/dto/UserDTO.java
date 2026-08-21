@@ -5,13 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-/**
- * Usuario del sistema.
- *
- * <p>
- * La contraseña es solo de entrada (POST/PUT): el WS la pone en {@code null}
- * antes de responder.
- */
 public class UserDTO {
 
 	private Long id;
@@ -24,7 +17,6 @@ public class UserDTO {
 	@Size(min = 4, max = 40, message = "El usuario debe tener entre 4 y 40 caracteres")
 	private String username;
 
-	/** Solo de entrada. En las respuestas siempre viaja como null. */
 	@Size(min = 4, max = 60, message = "La contraseña debe tener entre 4 y 60 caracteres")
 	private String password;
 

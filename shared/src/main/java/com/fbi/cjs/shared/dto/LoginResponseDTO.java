@@ -1,9 +1,5 @@
 package com.fbi.cjs.shared.dto;
 
-/**
- * Respuesta de un login exitoso: el token que hay que mandar en el header
- * {@code Authorization: Bearer <token>} y los datos del usuario autenticado.
- */
 public class LoginResponseDTO {
 
 	private String token;

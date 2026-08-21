@@ -6,14 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-/**
- * Criminal tal como viaja por la red.
- *
- * <p>
- * Un DTO no es una entidad: no tiene anotaciones de JPA ni lógica. Al conectar
- * Oracle habrá además una entidad {@code Criminal} y un mapper entre ambas; el
- * front nunca ve la entidad.
- */
 public class CriminalDTO {
 
 	private Long id;

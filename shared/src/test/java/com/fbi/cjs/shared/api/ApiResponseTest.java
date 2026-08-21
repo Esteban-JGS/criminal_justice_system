@@ -9,10 +9,6 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-/**
- * El sobre de respuesta es el contrato entre el WS y el front: si cambia, los
- * dos lados se rompen a la vez.
- */
 class ApiResponseTest {
 
 	@Test

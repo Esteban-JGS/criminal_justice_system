@@ -2,7 +2,6 @@ package com.fbi.cjs.shared.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
-/** Cuerpo del POST /auth/login. */
 public class LoginRequestDTO {
 
 	@NotBlank(message = "El usuario es obligatorio")

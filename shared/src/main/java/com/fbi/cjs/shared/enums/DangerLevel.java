@@ -1,6 +1,5 @@
 package com.fbi.cjs.shared.enums;
 
-/** Nivel de peligrosidad de un criminal. */
 public enum DangerLevel {
 	BAJO("Bajo"), MEDIO("Medio"), ALTO("Alto");
 

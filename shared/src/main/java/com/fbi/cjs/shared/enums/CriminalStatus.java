@@ -1,6 +1,5 @@
 package com.fbi.cjs.shared.enums;
 
-/** Estado actual de un criminal dentro del sistema. */
 public enum CriminalStatus {
 	ACTIVO("Activo"), CAPTURADO("Capturado"), FALLECIDO("Fallecido");
 
