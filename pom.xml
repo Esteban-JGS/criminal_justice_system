@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+        POM padre del monorepo. No produce código (packaging pom); sirve para listar
+        los módulos y centralizar versiones de librerías y plugins, de modo que los
+        hijos no repitan <version> y actualizar sea una sola línea.
+
+        "mvn install" en la raíz construye los tres en orden (shared -> ws -> front):
+        Maven lo deduce solo del grafo de dependencias.
+
+            shared/  DTOs y enums puros, compartidos por ws y front
+            ws/      WAR con la API REST, se despliega en Payara
+            front/   app de escritorio JavaFX que consume esa API
+    -->
+
+    <groupId>com.fbi</groupId>
+    <artifactId>criminal-justice-system-parent</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+    <name>Criminal Justice System (Monorepo)</name>
+
+    <modules>
+        <module>shared</module>
+        <module>ws</module>
+        <module>front</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!--
+            Versión de Java de TODO el monorepo.
+            OJO: Payara 6 está certificado hasta Java 21. Si tu dominio de Payara corre
+            sobre un JDK menor a 25, el WAR no va a desplegar ("Unsupported class file
+            major version"). Solución: bajar esta propiedad a 21 y recompilar; no hay
+            que tocar ninguna otra cosa del código.
+        -->
+        <java.version>25</java.version>
+
+        <!-- Versiones centralizadas -->
+        <jakartaee.version>11.0.0</jakartaee.version>
+        <javafx.version>26.0.2</javafx.version>
+        <materialfx.version>11.16.1</materialfx.version>
+        <jackson.version>2.18.2</jackson.version>
+
+        <!-- Plugins -->
+        <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
+        <maven.war.plugin.version>3.4.0</maven.war.plugin.version>
+        <maven.jar.plugin.version>3.4.2</maven.jar.plugin.version>
+        <javafx.plugin.version>0.0.8</javafx.plugin.version>
+        <spotless.plugin.version>2.43.0</spotless.plugin.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Módulo compartido: DTOs y enums que viajan por JSON entre ws y front -->
+            <dependency>
+                <groupId>com.fbi</groupId>
+                <artifactId>criminal-justice-system-shared</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!--
+                API completa de Jakarta EE 10. Scope 'provided' = solo para compilar;
+                la implementación real (JAX-RS/Jersey, CDI/Weld, JPA/EclipseLink) ya
+                viene dentro de Payara. Si la empaquetáramos en el WAR habría choques
+                de clases al desplegar.
+            -->
+            <dependency>
+                <groupId>jakarta.platform</groupId>
+                <artifactId>jakarta.jakartaee-api</artifactId>
+                <version>${jakartaee.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- JSON en el cliente JavaFX (el servidor usa el JSON-B que trae Payara) -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <!-- JavaFX -->
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-controls</artifactId>
+                <version>${javafx.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-fxml</artifactId>
+                <version>${javafx.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.palexdev</groupId>
+                <artifactId>materialfx</artifactId>
+                <version>${materialfx.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven.compiler.plugin.version}</version>
+                    <configuration>
+                        <release>${java.version}</release>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>${maven.war.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven.jar.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-maven-plugin</artifactId>
+                    <version>${javafx.plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+
+            <!--
+                =====================================================================
+                FORMATO DE CÓDIGO (Spotless) — corre sobre TODO el monorepo
+                =====================================================================
+                mvn spotless:apply   -> formatea
+                mvn spotless:check   -> falla si algo está mal formateado (útil en CI)
+            -->
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless.plugin.version}</version>
+                <configuration>
+                    <java>
+                        <!-- Eclipse formatter: los basados en javac fallan con Java 25 -->
+                        <eclipse>
+                            <version>4.30</version>
+                        </eclipse>
+                        <removeUnusedImports/>
+                    </java>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,18 @@
+# Normaliza los finales de línea: LF en el repositorio, nativos al hacer checkout.
+# Evita diffs completos cuando alguien trabaja en Windows y otro en Linux/macOS.
+* text=auto
+
+*.java   text diff=java
+*.xml    text
+*.fxml   text
+*.css    text
+*.md     text
+*.json   text
+*.sh     text eol=lf
+*.bat    text eol=crlf
+*.cmd    text eol=crlf
+
+*.png    binary
+*.jar    binary
+*.war    binary
+*.zip    binary

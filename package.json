@@ -1,0 +1,18 @@
+{
+	"name": "criminal_justice_system",
+	"version": "1.0.0",
+	"description": "Criminal Justice System - monorepo (ws REST + front JavaFX)",
+	"scripts": {
+		"prepare": "husky",
+		"format": "mvn spotless:apply",
+		"build": "mvn clean install",
+		"ws:package": "mvn -pl shared,ws clean install",
+		"front:run": "mvn -pl front javafx:run"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.5.8",
+		"@commitlint/cli": "^19.0.0",
+		"@commitlint/config-conventional": "^19.0.0",
+		"husky": "^9.0.11"
+	}
+}

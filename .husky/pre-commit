@@ -1,0 +1,8 @@
+#!/bin/sh
+echo "Formatting Java code with Spotless..."
+mvn spotless:apply
+
+echo "Formatting config files (JSON/JS) with Biome..."
+npx @biomejs/biome check --write --no-errors-on-unmatched
+
+echo "Notice: If the formatters modified any files, you might need to stage them again (git add) before committing."
