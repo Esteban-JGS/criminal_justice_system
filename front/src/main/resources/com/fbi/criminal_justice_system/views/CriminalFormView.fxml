@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="600.0" minWidth="700.0" prefHeight="600.0" prefWidth="700.0" spacing="20.0" styleClass="content-area" stylesheets="@../styles/FbiTheme.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fbi.criminal_justice_system.controllers.CriminalFormController">
+   <children>
+      <VBox spacing="6.0">
+         <children>
+            <Label fx:id="lblFormTitle" styleClass="section-title" text="Registrar Criminal" />
+            <Label styleClass="section-subtitle" text="Los campos marcados con * son obligatorios." />
+         </children>
+      </VBox>
+
+      <Region maxHeight="1.0" minHeight="1.0" prefHeight="1.0" styleClass="section-divider" />
+
+      <GridPane hgap="18.0" vgap="12.0" VBox.vgrow="ALWAYS">
+        <columnConstraints>
+          <ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="130.0" prefWidth="130.0" />
+          <ColumnConstraints hgrow="ALWAYS" minWidth="250.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="45.0" prefHeight="45.0" vgrow="NEVER" />
+          <RowConstraints minHeight="45.0" prefHeight="45.0" vgrow="NEVER" />
+          <RowConstraints minHeight="45.0" prefHeight="45.0" vgrow="NEVER" />
+          <RowConstraints minHeight="45.0" prefHeight="45.0" vgrow="NEVER" />
+          <RowConstraints minHeight="45.0" prefHeight="45.0" vgrow="NEVER" />
+        </rowConstraints>
+         <children>
+            <Label styleClass="form-label" text="NOMBRE *" />
+            <TextField fx:id="txtName" maxHeight="35.0" minHeight="35.0" promptText="Nombre completo" styleClass="form-field" GridPane.columnIndex="1" />
+
+            <Label styleClass="form-label" text="ALIAS" GridPane.rowIndex="1" />
+            <TextField fx:id="txtAlias" maxHeight="35.0" minHeight="35.0" promptText="Apodo conocido" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+            <Label styleClass="form-label" text="DELITO *" GridPane.rowIndex="2" />
+            <TextField fx:id="txtCrime" maxHeight="35.0" minHeight="35.0" promptText="Delito imputado" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+            <Label styleClass="form-label" text="PELIGROSIDAD *" GridPane.rowIndex="3" />
+            <ComboBox fx:id="cmbDangerLevel" maxHeight="35.0" minHeight="35.0" prefWidth="250.0" promptText="Seleccione un nivel" styleClass="combo-box" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+            <Label styleClass="form-label" text="ESTATUS *" GridPane.rowIndex="4" />
+            <ComboBox fx:id="cmbStatus" maxHeight="35.0" minHeight="35.0" prefWidth="250.0" promptText="Seleccione un estatus" styleClass="combo-box" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+         </children>
+      </GridPane>
+
+      <Label fx:id="lblError" styleClass="login-error" wrapText="true" />
+
+      <HBox alignment="CENTER_RIGHT" spacing="15.0">
+         <children>
+            <Button fx:id="btnCancel" minHeight="40.0" minWidth="130.0" mnemonicParsing="false" onAction="#onActionBtnCancel" styleClass="btn-secondary" text="Cancelar" />
+            <Button fx:id="btnSave" minHeight="40.0" minWidth="130.0" mnemonicParsing="false" onAction="#onActionBtnSave" styleClass="btn-primary" text="Guardar" />
+         </children>
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+      </HBox>
+   </children>
+</VBox>

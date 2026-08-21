@@ -2,18 +2,20 @@
 package com.fbi.criminal_justice_system.controllers;
 
 import com.fbi.cjs.shared.dto.CriminalDTO;
+import com.fbi.cjs.shared.enums.DangerLevel;
 import com.fbi.cjs.shared.enums.Role;
 import com.fbi.criminal_justice_system.services.CriminalService;
-import com.fbi.criminal_justice_system.utils.ApiException;
+import com.fbi.criminal_justice_system.utils.AppContext;
 import com.fbi.criminal_justice_system.utils.BackgroundTask;
+import com.fbi.criminal_justice_system.utils.CriminalTable;
+import com.fbi.criminal_justice_system.utils.FlowController;
 import com.fbi.criminal_justice_system.utils.Session;
 import javafx.animation.PauseTransition;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -22,8 +24,9 @@ import javafx.scene.control.TextField;
 import javafx.util.Duration;
 
 /**
- * Listado de criminales. No sabe de HTTP ni de JSON: le pide datos a
- * {@link CriminalService} y pinta lo que recibe.
+ * Listado de criminales y punto de entrada al alta, edición y borrado. No sabe
+ * de HTTP ni de JSON: le pide datos a {@link CriminalService} y pinta lo que
+ * recibe.
  */
 public class CriminalController extends Controller {
 
@@ -38,7 +41,7 @@ public class CriminalController extends Controller {
 	@FXML
 	private TableColumn<CriminalDTO, String> colCrime;
 	@FXML
-	private TableColumn<CriminalDTO, String> colDangerLevel;
+	private TableColumn<CriminalDTO, DangerLevel> colDangerLevel;
 	@FXML
 	private TableColumn<CriminalDTO, String> colStatus;
 	@FXML
@@ -47,6 +50,10 @@ public class CriminalController extends Controller {
 	private Button btnSearchCriminal;
 	@FXML
 	private Button btnAddCriminal;
+	@FXML
+	private Button btnEditCriminal;
+	@FXML
+	private Button btnDeleteCriminal;
 
 	private final CriminalService criminalService = new CriminalService();
 
@@ -62,14 +69,15 @@ public class CriminalController extends Controller {
 	/**
 	 * {@code initialize()} se ejecuta cada vez que el FlowController muestra la
 	 * vista, no solo la primera. Columnas y listeners se configuran una única vez;
-	 * los datos, en cambio, se recargan siempre para no mostrar información vieja.
+	 * los datos se recargan siempre para no mostrar información vieja.
 	 */
 	private boolean configured;
 
 	@Override
 	public void initialize() {
 		if (!configured) {
-			configureColumns();
+			CriminalTable.configureColumns(colId, colName, colAlias, colCrime, colDangerLevel, colStatus);
+			tableCriminals.setItems(criminals);
 			configureSearch();
 			configurePermissions();
 			configured = true;
@@ -82,26 +90,6 @@ public class CriminalController extends Controller {
 		return "Criminales";
 	}
 
-	/**
-	 * Se usan lambdas en vez de {@code PropertyValueFactory}: la fábrica busca el
-	 * getter por reflexión y, si el nombre no coincide, la columna sale vacía sin
-	 * error alguno. Con lambda, un nombre mal escrito no compila.
-	 */
-	private void configureColumns() {
-		colId.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().getId()));
-		colName.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getName()));
-		colAlias.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getAlias()));
-		colCrime.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getCrime()));
-
-		// Los enums se muestran con su etiqueta ("Alto"), pero viajan como ALTO.
-		colDangerLevel.setCellValueFactory(cell -> new SimpleStringProperty(
-				cell.getValue().getDangerLevel() == null ? "" : cell.getValue().getDangerLevel().getLabel()));
-		colStatus.setCellValueFactory(cell -> new SimpleStringProperty(
-				cell.getValue().getStatus() == null ? "" : cell.getValue().getStatus().getLabel()));
-
-		tableCriminals.setItems(criminals);
-	}
-
 	/** La búsqueda la resuelve el servidor; acá solo se manda el texto. */
 	private void configureSearch() {
 		searchDebounce.setOnFinished(event -> loadData());
@@ -110,19 +98,19 @@ public class CriminalController extends Controller {
 	}
 
 	/**
-	 * Un agente puede consultar, pero no registrar. El WS igual rechaza la petición
-	 * con 403; deshabilitar el botón es solo para no ofrecer algo que va a fallar.
+	 * Un agente consulta pero no modifica. El WS igual rechaza la petición con 403;
+	 * deshabilitar los botones es para no ofrecer algo que va a fallar.
 	 */
 	private void configurePermissions() {
-		btnAddCriminal.setDisable(!Session.hasAnyRole(Role.SUPERVISOR, Role.JEFE_FBI));
+		boolean canEdit = Session.hasAnyRole(Role.SUPERVISOR, Role.JEFE_FBI);
+		btnAddCriminal.setDisable(!canEdit);
+		btnEditCriminal.setDisable(!canEdit);
+		btnDeleteCriminal.setDisable(!Session.hasAnyRole(Role.JEFE_FBI));
 	}
 
 	/**
-	 * Carga la tabla desde el WS.
-	 *
-	 * <p>
-	 * La llamada corre en otro hilo ({@link BackgroundTask}) para que la ventana
-	 * siga respondiendo mientras el servidor contesta.
+	 * Carga la tabla desde el WS en otro hilo, para que la ventana siga
+	 * respondiendo mientras el servidor contesta.
 	 */
 	private void loadData() {
 		String filter = txtSearchCriminal.getText();
@@ -136,16 +124,9 @@ public class CriminalController extends Controller {
 			btnSearchCriminal.setDisable(false);
 		}, error -> {
 			criminals.clear();
-			tableCriminals.setPlaceholder(new Label(describe(error)));
+			tableCriminals.setPlaceholder(new Label(describeError(error)));
 			btnSearchCriminal.setDisable(false);
 		});
-	}
-
-	private String describe(Throwable error) {
-		if (error instanceof ApiException apiException) {
-			return apiException.getDisplayMessage();
-		}
-		return "Error inesperado: " + error.getMessage();
 	}
 
 	@FXML
@@ -156,10 +137,55 @@ public class CriminalController extends Controller {
 
 	@FXML
 	private void onActionBtnAddCriminal(ActionEvent event) {
-		// Próxima semana: formulario de registro que llame a
-		// criminalService.create(...)
-		// FlowController.getInstance().goViewInWindowModal("CriminalRegisterView",
-		// stage, false);
-		System.out.println("Abrir formulario de registro (próxima semana)");
+		openForm(null);
+	}
+
+	@FXML
+	private void onActionBtnEditCriminal(ActionEvent event) {
+		CriminalDTO selected = tableCriminals.getSelectionModel().getSelectedItem();
+		if (selected == null) {
+			mensaje.showModal(AlertType.WARNING, "Editar criminal", stage,
+					"Seleccioná primero un criminal de la tabla.");
+			return;
+		}
+		openForm(selected);
+	}
+
+	@FXML
+	private void onActionBtnDeleteCriminal(ActionEvent event) {
+		CriminalDTO selected = tableCriminals.getSelectionModel().getSelectedItem();
+		if (selected == null) {
+			mensaje.showModal(AlertType.WARNING, "Eliminar criminal", stage,
+					"Seleccioná primero un criminal de la tabla.");
+			return;
+		}
+
+		boolean confirmed = mensaje.showConfirmation("Eliminar criminal", stage,
+				"¿Eliminar a " + selected.getName() + " del sistema? Esta acción no se puede deshacer.");
+		if (!confirmed) {
+			return;
+		}
+
+		BackgroundTask.run(() -> {
+			criminalService.delete(selected.getId());
+			return null;
+		}, ignored -> {
+			mensaje.show(AlertType.INFORMATION, "Eliminar criminal", "Criminal eliminado correctamente.");
+			loadData();
+		}, error -> mensaje.showModal(AlertType.ERROR, "Eliminar criminal", stage, describeError(error)));
+	}
+
+	/**
+	 * Abre el formulario modal y recarga la tabla si guardó. Modal a propósito: no
+	 * tiene sentido editar dos criminales a la vez ni dejar la tabla desfasada.
+	 */
+	private void openForm(CriminalDTO criminal) {
+		AppContext.getInstance().set(CriminalFormController.CONTEXT_SELECTED, criminal);
+		FlowController.getInstance().goViewInWindowModal("CriminalFormView", stage, false);
+
+		if (Boolean.TRUE.equals(AppContext.getInstance().get(CriminalFormController.CONTEXT_SAVED))) {
+			loadData();
+		}
+		AppContext.getInstance().delete(CriminalFormController.CONTEXT_SELECTED);
 	}
 }

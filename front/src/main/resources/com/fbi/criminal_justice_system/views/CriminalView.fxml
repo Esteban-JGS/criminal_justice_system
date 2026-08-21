@@ -31,15 +31,14 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </VBox>
-            <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
+            <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="12.0" HBox.hgrow="ALWAYS">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
                <children>
-                  <Button fx:id="btnAddCriminal" maxHeight="75.0" maxWidth="140.0" minHeight="75.0" minWidth="125.0" mnemonicParsing="false" onAction="#onActionBtnAddCriminal" prefHeight="75.0" prefWidth="140.0" styleClass="btn-primary" text="Aregar Criminal" />
+                  <Button fx:id="btnEditCriminal" maxHeight="75.0" minHeight="75.0" minWidth="120.0" mnemonicParsing="false" onAction="#onActionBtnEditCriminal" prefHeight="75.0" prefWidth="120.0" styleClass="btn-secondary" text="Editar" />
+                  <Button fx:id="btnDeleteCriminal" maxHeight="75.0" minHeight="75.0" minWidth="120.0" mnemonicParsing="false" onAction="#onActionBtnDeleteCriminal" prefHeight="75.0" prefWidth="120.0" styleClass="btn-danger" text="Eliminar" />
+                  <Button fx:id="btnAddCriminal" maxHeight="75.0" maxWidth="140.0" minHeight="75.0" minWidth="125.0" mnemonicParsing="false" onAction="#onActionBtnAddCriminal" prefHeight="75.0" prefWidth="140.0" styleClass="btn-primary" text="Agregar Criminal" />
                </children>
             </HBox>
          </children>
