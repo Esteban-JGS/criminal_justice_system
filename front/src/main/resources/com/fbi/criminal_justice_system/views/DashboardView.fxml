@@ -46,6 +46,7 @@
                <children>
                   <Button fx:id="btnCriminals" layoutX="430.0" layoutY="25.0" maxHeight="75.0" maxWidth="115.0" minHeight="75.0" minWidth="115.0" mnemonicParsing="false" onAction="#onActionBtnCriminals" prefHeight="75.0" prefWidth="115.0" styleClass="btn-primary" text="Criminales" />
                   <Button fx:id="btnSearch" maxHeight="75.0" maxWidth="115.0" minHeight="75.0" minWidth="115.0" mnemonicParsing="false" onAction="#onActionBtnSearch" prefHeight="75.0" prefWidth="115.0" styleClass="btn-primary" text="Buscar" />
+                  <Button fx:id="btnUsers" maxHeight="75.0" maxWidth="115.0" minHeight="75.0" minWidth="115.0" mnemonicParsing="false" onAction="#onActionBtnUsers" prefHeight="75.0" prefWidth="115.0" styleClass="btn-primary" text="Usuarios" />
                   <Button fx:id="btnLogOut" layoutX="400.0" layoutY="25.0" minHeight="50.0" minWidth="50.0" mnemonicParsing="false" onAction="#onActionBtnLogOut" prefHeight="50.0" prefWidth="70.0" styleClass="btn-logout" text="Salir" />
                </children>
             </HBox>

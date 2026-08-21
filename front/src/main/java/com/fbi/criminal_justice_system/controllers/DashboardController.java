@@ -15,7 +15,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 /**
- * Pantalla principal.
+ * Pantalla principal: barra superior con los datos de la sesión y navegación
+ * hacia las demás vistas.
  *
  * <p>
  * Toma el usuario de {@link Session}. Antes dependía de que alguien llamara
@@ -38,6 +39,8 @@ public class DashboardController extends Controller {
 	@FXML
 	private Button btnSearch;
 	@FXML
+	private Button btnUsers;
+	@FXML
 	private Button btnLogOut;
 
 	private final AuthService authService = new AuthService();
@@ -54,6 +57,7 @@ public class DashboardController extends Controller {
 			lblAgent.setText("Agente: —");
 			lblRol.setText("Sin sesión");
 			lblWelcome.setText("No hay una sesión activa. Volvé a iniciar sesión.");
+			btnUsers.setVisible(false);
 			return;
 		}
 
@@ -61,8 +65,10 @@ public class DashboardController extends Controller {
 		lblRol.setText(user.getRole() == null ? "" : user.getRole().getLabel());
 		lblWelcome.setText("Bienvenido al sistema, " + user.getName() + ".\nSeleccioná una opción del menú.");
 
-		// La búsqueda avanzada queda para supervisores y jefes.
-		btnSearch.setDisable(!Session.hasAnyRole(Role.SUPERVISOR, Role.JEFE_FBI));
+		// Administrar usuarios es de supervisores y jefes: al agente ni se le muestra.
+		boolean canSeeUsers = Session.hasAnyRole(Role.SUPERVISOR, Role.JEFE_FBI);
+		btnUsers.setVisible(canSeeUsers);
+		btnUsers.setManaged(canSeeUsers);
 	}
 
 	@Override
@@ -77,16 +83,17 @@ public class DashboardController extends Controller {
 
 	@FXML
 	private void onActionBtnSearch(ActionEvent event) {
-		// Pendiente: SearchView todavía no existe.
-		lblWelcome.setText("La búsqueda avanzada se implementa en la próxima entrega.");
+		FlowController.getInstance().goView("SearchView");
+	}
+
+	@FXML
+	private void onActionBtnUsers(ActionEvent event) {
+		FlowController.getInstance().goView("UserView");
 	}
 
 	/**
-	 * Cierra sesión.
-	 *
-	 * <p>
-	 * Primero se abre el login y después se avisa al servidor: si el WS no
-	 * responde, el usuario igual queda fuera de la aplicación.
+	 * Cierra sesión. Primero se abre el login y después se avisa al servidor: si el
+	 * WS no responde, el usuario igual queda fuera de la aplicación.
 	 */
 	@FXML
 	private void onActionBtnLogOut(ActionEvent event) {
