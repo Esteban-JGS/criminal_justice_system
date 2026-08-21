@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.fbi</groupId>
+        <artifactId>criminal-justice-system-parent</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <!--
+        Módulo shared: el contrato entre el web service y el front. Solo DTOs y enums,
+        sin Jakarta EE, sin JavaFX, sin lógica de negocio ni acceso a datos.
+
+        Existe porque el WS serializa un CriminalDTO a JSON y el front lo deserializa
+        al mismo CriminalDTO. Con una copia en cada lado, tarde o temprano se
+        desincronizan y el error aparece en runtime en vez de al compilar.
+    -->
+    <artifactId>criminal-justice-system-shared</artifactId>
+    <packaging>jar</packaging>
+    <name>Criminal Justice System :: Shared DTOs</name>
+
+    <dependencies>
+        <!--
+            Anotaciones de Bean Validation (@NotBlank, @Size...). Van en los DTOs para que
+            el WS valide automáticamente lo que entra por POST/PUT.
+            Scope 'provided': Payara ya trae la implementación (Hibernate Validator) y,
+            al no ser transitiva, el front no la arrastra. Si una anotación no está en el
+            classpath en runtime, la JVM simplemente la ignora: el front no se rompe.
+        -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>3.1.1</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!--
+                Automatic-Module-Name: le da a este jar un nombre de módulo estable para
+                JPMS. El front (que SÍ es modular, tiene module-info.java) lo usa así:
+                    requires com.fbi.cjs.shared;
+                Al ser un módulo automático queda "abierto", así que JavaFX y Jackson
+                pueden leer los getters por reflexión sin que abramos paquetes a mano.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Automatic-Module-Name>com.fbi.cjs.shared</Automatic-Module-Name>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
