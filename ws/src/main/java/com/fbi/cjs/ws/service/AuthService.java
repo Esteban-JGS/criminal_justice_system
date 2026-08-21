@@ -24,10 +24,10 @@ import jakarta.inject.Inject;
 public class AuthService {
 
 	@Inject
-	private UserRepository userRepository;
+	UserRepository userRepository;
 
 	@Inject
-	private TokenStore tokenStore;
+	TokenStore tokenStore;
 
 	public LoginResponseDTO login(LoginRequestDTO request) {
 		UserDTO user = userRepository.findByUsername(request.getUsername())

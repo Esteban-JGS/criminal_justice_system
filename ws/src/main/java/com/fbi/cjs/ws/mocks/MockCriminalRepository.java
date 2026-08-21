@@ -32,8 +32,9 @@ public class MockCriminalRepository implements CriminalRepository {
 	/** Hace las veces de la secuencia de Oracle. */
 	private final AtomicLong sequence = new AtomicLong(0);
 
+	/** Público para que las pruebas puedan sembrar los datos sin levantar CDI. */
 	@PostConstruct
-	void seed() {
+	public void seed() {
 		for (CriminalDTO criminal : MockData.criminals()) {
 			store.put(criminal.getId(), criminal);
 			sequence.updateAndGet(current -> Math.max(current, criminal.getId()));

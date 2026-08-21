@@ -21,8 +21,12 @@ import java.util.List;
 @ApplicationScoped
 public class CriminalService {
 
+	/**
+	 * Sin {@code private} a propósito: así las pruebas del mismo paquete le pueden
+	 * poner un repositorio sin levantar CDI.
+	 */
 	@Inject
-	private CriminalRepository criminalRepository;
+	CriminalRepository criminalRepository;
 
 	/** Lista con filtros opcionales; si todos son nulos devuelve todo. */
 	public List<CriminalDTO> search(String text, CriminalStatus status, DangerLevel dangerLevel) {

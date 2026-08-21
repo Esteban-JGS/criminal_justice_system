@@ -24,8 +24,9 @@ public class MockUserRepository implements UserRepository {
 	private final Map<Long, UserDTO> store = new ConcurrentHashMap<>();
 	private final AtomicLong sequence = new AtomicLong(0);
 
+	/** Público para que las pruebas puedan sembrar los datos sin levantar CDI. */
 	@PostConstruct
-	void seed() {
+	public void seed() {
 		for (UserDTO user : MockData.users()) {
 			store.put(user.getId(), user);
 			sequence.updateAndGet(current -> Math.max(current, user.getId()));
