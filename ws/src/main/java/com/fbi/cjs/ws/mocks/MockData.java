@@ -1,7 +1,9 @@
 package com.fbi.cjs.ws.mocks;
 
+import com.fbi.cjs.shared.dto.AgentDTO;
 import com.fbi.cjs.shared.dto.CriminalDTO;
 import com.fbi.cjs.shared.dto.UserDTO;
+import com.fbi.cjs.shared.enums.AgentStatus;
 import com.fbi.cjs.shared.enums.CriminalStatus;
 import com.fbi.cjs.shared.enums.DangerLevel;
 import com.fbi.cjs.shared.enums.Role;
@@ -46,5 +48,15 @@ public final class MockData {
 		criminals.add(new CriminalDTO(10L, "Gabriela Solano", "La Mantis", "Falsificación", DangerLevel.BAJO,
 				CriminalStatus.FALLECIDO));
 		return criminals;
+	}
+
+	public static List<AgentDTO> agents() {
+		List<AgentDTO> agents = new ArrayList<>();
+		agents.add(new AgentDTO(1L, "FBI-1001", "Dana Scully", "Ciencias Forenses", AgentStatus.ACTIVO));
+		agents.add(new AgentDTO(2L, "FBI-1002", "Fox Mulder", "Casos Sin Resolver", AgentStatus.ACTIVO));
+		agents.add(new AgentDTO(3L, "FBI-1003", "Clarice Starling", "Ciencias del Comportamiento", AgentStatus.ACTIVO));
+		agents.add(new AgentDTO(4L, "FBI-1004", "Eliot Ness", "Crimen Organizado", AgentStatus.SUSPENDIDO));
+		agents.add(new AgentDTO(5L, "FBI-1005", "Marge Gunderson", "Cibercrimen", AgentStatus.RETIRADO));
+		return agents;
 	}
 }
