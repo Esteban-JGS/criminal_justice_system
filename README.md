@@ -63,9 +63,9 @@ criminal_justice_system/
 │   ├── pom.xml
 │   └── src/main/java/com/fbi/cjs/shared/
 │       ├── api/                ApiResponse, ResponseCode, ApiPaths
-│       ├── dto/                CriminalDTO, UserDTO, RoleDTO, LoginRequestDTO,
-│       │                       LoginResponseDTO
-│       └── enums/              Role, DangerLevel, CriminalStatus
+│       ├── dto/                CriminalDTO, AgentDTO, UserDTO, RoleDTO,
+│       │                       LoginRequestDTO, LoginResponseDTO
+│       └── enums/              Role, DangerLevel, CriminalStatus, AgentStatus
 │
 ├── ws/                         MÓDULO 2 · API REST (se despliega en Payara)
 │   ├── pom.xml
@@ -118,12 +118,14 @@ desincronizan y el error aparece en tiempo de ejecución en vez de al compilar.
 | `api` | `ResponseCode` | Códigos de la API con su equivalente HTTP |
 | `api` | `ApiPaths` | Las rutas (`/auth`, `/criminals`, …) en un solo lugar |
 | `dto` | `CriminalDTO` | Un criminal tal como viaja en JSON |
+| `dto` | `AgentDTO` | Un agente del FBI: placa, nombre, división y estado |
 | `dto` | `UserDTO` | Un usuario. La contraseña es solo de entrada, nunca sale |
 | `dto` | `RoleDTO` | Rol como elemento de catálogo (valor + etiqueta visible) |
 | `dto` | `LoginRequestDTO` / `LoginResponseDTO` | Cuerpo y respuesta del login |
 | `enums` | `Role` | `AGENTE`, `SUPERVISOR`, `JEFE_FBI` |
 | `enums` | `DangerLevel` | `BAJO`, `MEDIO`, `ALTO` |
 | `enums` | `CriminalStatus` | `ACTIVO`, `CAPTURADO`, `FALLECIDO` |
+| `enums` | `AgentStatus` | `ACTIVO`, `SUSPENDIDO`, `RETIRADO` |
 
 Los enums viajan como su **nombre** (`"SUPERVISOR"`); el método `getLabel()` existe solo
 para mostrar el texto en pantalla.
@@ -162,13 +164,14 @@ cambiar el origen de los datos no obliga a tocar servicios ni recursos REST.
 | `JaxRsApplication` | Enciende JAX-RS y fija el prefijo `/api/v1`. Los recursos se descubren por anotaciones, sin `web.xml` |
 | `AuthResource` | `POST /auth/login`, `POST /auth/logout`, `GET /auth/me` |
 | `CriminalResource` | CRUD de criminales y búsqueda con filtros |
+| `AgentResource` | CRUD de agentes y búsqueda con filtros |
 | `UserResource` | CRUD de usuarios |
 | `RoleResource` | Catálogo de roles, solo lectura |
 | `HealthResource` | `GET /health`, público: confirma que el WAR está desplegado |
 | `TokenStore` | Emite tokens opacos con 8 horas de vigencia y los valida |
 | `AuthenticationFilter` | Lee `Authorization: Bearer …` y rechaza con 401 si el token no vale |
 | `AuthorizationFilter` | Aplica `@AllowedRoles` y rechaza con 403 |
-| `MockData` | Los datos iniciales: 10 criminales y 3 usuarios |
+| `MockData` | Los datos iniciales: 10 criminales, 5 agentes y 3 usuarios |
 
 ### Recorrido de una petición
 
@@ -404,6 +407,11 @@ Base: `http://localhost:8080/criminal_justice_ws/api/v1`
 | POST | `/criminals` | `SUPERVISOR`, `JEFE_FBI` | Registrar |
 | PUT | `/criminals/{id}` | `SUPERVISOR`, `JEFE_FBI` | Actualizar |
 | DELETE | `/criminals/{id}` | `JEFE_FBI` | Eliminar |
+| GET | `/agents` | token | Lista. Filtros: `search`, `status` |
+| GET | `/agents/{id}` | token | Un agente |
+| POST | `/agents` | `SUPERVISOR`, `JEFE_FBI` | Registrar |
+| PUT | `/agents/{id}` | `SUPERVISOR`, `JEFE_FBI` | Actualizar |
+| DELETE | `/agents/{id}` | `JEFE_FBI` | Eliminar |
 | GET | `/users` | `SUPERVISOR`, `JEFE_FBI` | Lista de usuarios |
 | GET | `/users/{id}` | `SUPERVISOR`, `JEFE_FBI` | Un usuario |
 | POST | `/users` | `JEFE_FBI` | Crear |
