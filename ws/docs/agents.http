@@ -1,0 +1,111 @@
+### Peticiones de la practica del modulo de agentes.
+### Para VS Code con la extension REST Client (humao.rest-client).
+### Sobre cada peticion aparece el enlace "Send Request": haga clic ahi para ejecutarla.
+### Ejecute primero el login: las demas peticiones usan el token que devuelve.
+
+@base = http://localhost:8080/criminal_justice_ws/api/v1
+
+### 1. Estado del servicio. Es publico: si esto no responde 200, el WAR no esta desplegado.
+GET {{base}}/health
+
+### 2. Login como supervisor. Guarda la respuesta con el nombre "login".
+# @name login
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "supervisor01",
+  "password": "1234"
+}
+
+### 3. Login como jefe, para las operaciones que solo el puede hacer.
+# @name loginJefe
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "jefe01",
+  "password": "1234"
+}
+
+@token = {{login.response.body.$.data.token}}
+@tokenJefe = {{loginJefe.response.body.$.data.token}}
+
+### 4. Listar SIN token. Esperado: 401.
+GET {{base}}/agents
+
+### 5. Listar con token. Esperado: 200 con 5 agentes.
+GET {{base}}/agents
+Authorization: Bearer {{token}}
+
+### 6. Filtrar por texto. Esperado: 200 con un solo agente.
+GET {{base}}/agents?search=scully
+Authorization: Bearer {{token}}
+
+### 7. Filtrar por estado. Esperado: 200 con los agentes activos.
+GET {{base}}/agents?status=ACTIVO
+Authorization: Bearer {{token}}
+
+### 8. Obtener uno. Esperado: 200.
+GET {{base}}/agents/1
+Authorization: Bearer {{token}}
+
+### 9. Obtener uno que no existe. Esperado: 404.
+GET {{base}}/agents/999
+Authorization: Bearer {{token}}
+
+### 10. Registrar. Esperado: 201 y una cabecera Location con la URL del agente creado.
+POST {{base}}/agents
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "badgeNumber": "FBI-2001",
+  "name": "Nuevo Agente",
+  "division": "Cibercrimen",
+  "status": "ACTIVO"
+}
+
+### 11. Registrar con una placa que ya existe. Esperado: 409.
+POST {{base}}/agents
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "badgeNumber": "FBI-1001",
+  "name": "Placa Repetida",
+  "division": "Forense",
+  "status": "ACTIVO"
+}
+
+### 12. Registrar con la placa mal formada. Esperado: 422 con el detalle del campo.
+POST {{base}}/agents
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "badgeNumber": "1234",
+  "name": "Placa Invalida",
+  "division": "Forense",
+  "status": "ACTIVO"
+}
+
+### 13. Actualizar. Cambie el id si el agente creado quedo con otro numero. Esperado: 200.
+PUT {{base}}/agents/6
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "badgeNumber": "FBI-2001",
+  "name": "Nuevo Agente",
+  "division": "Antiterrorismo",
+  "status": "SUSPENDIDO"
+}
+
+### 14. Eliminar siendo supervisor. Esperado: 403.
+DELETE {{base}}/agents/6
+Authorization: Bearer {{token}}
+
+### 15. Eliminar siendo jefe. Esperado: 200.
+DELETE {{base}}/agents/6
+Authorization: Bearer {{tokenJefe}}
