@@ -1,65 +1,55 @@
-# Práctica · El CRUD de Agentes no funciona
+# Práctica: diagnóstico de fallos en el web service
 
-Un compañero dejó a medias el módulo de **agentes** del web service: agentes del FBI con
-placa, división y estado. Escribió todo el código —DTO, repositorio, servicio y recurso
-REST— siguiendo los mismos patrones que ya existen para criminales y usuarios.
+## Contexto
 
-El problema es que **no funciona**. Ni siquiera compila.
+El módulo de **agentes** del web service quedó a medias. Están escritos el DTO, el
+repositorio, el servicio y el recurso REST, siguiendo los mismos patrones que ya existen
+para criminales y usuarios, pero el módulo no funciona. El proyecto ni siquiera compila.
 
-Tu trabajo no es reescribirlo: es **averiguar por qué falla cada cosa y arreglarlo**.
+El objetivo de la práctica no es escribir código nuevo, sino **encontrar los ocho fallos,
+explicar por qué ocurren y corregirlos**.
 
----
+## Reglas
 
-## Reglas del juego
+1. No borre un archivo para escribirlo de nuevo desde cero. Corrija el fallo puntual.
+2. No modifique las pruebas. Las pruebas describen el comportamiento esperado; si las
+   cambia para que pasen, el resultado deja de ser válido.
+3. No modifique los módulos de criminales ni de usuarios. Ese código funciona y sirve como
+   referencia.
+4. Registre cada fallo en la bitácora del final: síntoma, causa y corrección.
 
-1. **Prohibido borrar un archivo y escribirlo de nuevo desde cero.** Se corrige el fallo,
-   no se reemplaza el archivo. Si lo reescribís, no aprendiste a diagnosticar.
-2. **Prohibido tocar las pruebas.** Los tests describen cómo debe comportarse el código; si
-   los cambiás para que pasen, estás falsificando el resultado.
-3. **No toques los criminales ni los usuarios.** Ese código funciona y es tu mejor fuente
-   de consulta: casi todas las respuestas están ahí.
-4. Por cada fallo tenés que **anotar en la bitácora** qué síntoma viste, cuál era la causa
-   y cómo lo arreglaste. Eso vale tanto como el código.
-
----
-
-## Qué debe hacer el módulo cuando esté listo
+## Qué debe hacer el módulo cuando esté terminado
 
 Base de la API: `http://localhost:8080/criminal_justice_ws/api/v1`
 
-| Método | Ruta | Quién puede | Respuesta correcta |
-|---|---|---|---|
-| GET | `/agents` | cualquiera con token | 200 con la lista de 5 agentes |
-| GET | `/agents?search=texto` | cualquiera con token | 200, filtra por nombre, placa o división |
-| GET | `/agents?status=ACTIVO` | cualquiera con token | 200, filtra por estado |
-| GET | `/agents/{id}` | cualquiera con token | 200, o 404 si no existe |
-| POST | `/agents` | SUPERVISOR, JEFE_FBI | **201** con la cabecera `Location` |
+| Método | Ruta | Acceso | Respuesta esperada |
+| --- | --- | --- | --- |
+| GET | `/agents` | cualquier usuario autenticado | 200 con la lista de 5 agentes |
+| GET | `/agents?search=texto` | cualquier usuario autenticado | 200, filtra por nombre, placa o división |
+| GET | `/agents?status=ACTIVO` | cualquier usuario autenticado | 200, filtra por estado |
+| GET | `/agents/{id}` | cualquier usuario autenticado | 200, o 404 si no existe |
+| POST | `/agents` | SUPERVISOR, JEFE_FBI | 201 con la cabecera `Location` |
 | PUT | `/agents/{id}` | SUPERVISOR, JEFE_FBI | 200, o 404 si no existe |
 | DELETE | `/agents/{id}` | JEFE_FBI | 200, o 404 si no existe |
 
 Reglas de negocio:
 
-- La placa tiene formato `FBI-0000` y **no se puede repetir** entre agentes (409).
-- Sin token, cualquier ruta de `/agents` responde **401**.
-- Con un rol insuficiente, responde **403**.
-- Los datos inválidos responden **422** con el detalle de los campos.
+- La placa tiene formato `FBI-0000` y no se puede repetir entre agentes (409).
+- Sin token, cualquier ruta de `/agents` responde 401.
+- Con un rol insuficiente, responde 403.
+- Los datos inválidos responden 422 con el detalle de los campos.
 
-Datos de prueba (contraseña `1234` para todos): `agente01`, `supervisor01`, `jefe01`.
-
----
+Usuarios de prueba, contraseña `1234`: `agente01`, `supervisor01`, `jefe01`.
 
 ## Preparación
 
 ```bash
-# 1. Traer el código
 git pull
-
-# 2. Crear tu rama de trabajo
-git checkout -b practica-agentes-TUNOMBRE
-
-# 3. Intentar compilar (va a fallar: ahí empieza el ejercicio)
+git checkout -b practica-agentes-SUNOMBRE
 mvn clean install
 ```
+
+El último comando falla. Ahí empieza el trabajo.
 
 Para desplegar y probar:
 
@@ -68,125 +58,168 @@ asadmin start-domain domain1
 asadmin deploy --force=true ws/target/criminal_justice_ws.war
 ```
 
-El log del servidor, que vas a necesitar, está en:
+En Windows, `asadmin` está en `C:\Program Files\Java\payara7\bin\asadmin.bat`.
 
-```
+El log del servidor, que va a necesitar en dos de los niveles, está en:
+
+```text
 C:\Program Files\Java\payara7\glassfish\domains\domain1\logs\server.log
 ```
 
----
-
 ## Los cuatro niveles
 
-Van en orden: no podés ver el síntoma del nivel 2 hasta que el nivel 1 esté resuelto.
+Los niveles van en orden. Cada uno oculta al siguiente: hasta que el proyecto no compile no
+se puede desplegar, y hasta que no despliegue no se pueden ver los fallos de ejecución.
 
-### Nivel 0 · No compila · 2 fallos
+### Nivel 0. No compila (2 fallos)
 
-`mvn clean install` no llega a construir el `.war`.
+`mvn clean install` no llega a construir el archivo `.war`.
 
-**Qué hacer:** leé los mensajes de `[ERROR]` completos, no solo la última línea. Fijate en
-qué archivo y en qué línea ocurre cada uno. Ojo: **cinco mensajes de error no significan
-cinco problemas**; contá cuántas causas distintas hay en realidad.
+Lea los mensajes de `[ERROR]` completos, con el archivo y la línea de cada uno. Va a ver
+cinco mensajes, pero no son cinco problemas distintos: cuente cuántas causas hay en
+realidad.
 
-**Terminaste este nivel cuando:** `mvn clean install` dice `BUILD SUCCESS`.
+Nivel terminado cuando `mvn clean install` responde `BUILD SUCCESS`.
 
-### Nivel 1 · No despliega · 1 fallo
+### Nivel 1. No despliega (1 fallo)
 
-El `.war` se construye y `mvn test` corre, pero Payara rechaza la aplicación al
-desplegarla.
+El `.war` ya se construye y las pruebas corren, pero Payara rechaza la aplicación al
+desplegarla. Es normal que en este punto haya pruebas en rojo: corresponden a fallos de
+niveles posteriores.
 
-**Qué hacer:** leé la respuesta del comando `asadmin deploy` y buscá el mismo texto en
-`server.log`. El mensaje menciona una clase concreta y una palabra clave que te dice qué
-subsistema se quejó. Compará esa clase con su equivalente del módulo de criminales:
-**algo que una tiene, la otra no**.
+Lea la respuesta del comando `asadmin deploy`, que menciona una clase concreta y el
+subsistema que se quejó. Después compare esa clase con su equivalente del módulo de
+criminales: hay algo que una tiene y la otra no.
 
-**Terminaste este nivel cuando:** `asadmin deploy` dice `Command deploy executed successfully`.
+Nivel terminado cuando `asadmin deploy` responde `Command deploy executed successfully`.
 
-### Nivel 2 · Revienta al usarlo · 3 fallos
+### Nivel 2. Falla al usarlo (3 fallos)
 
-La aplicación levanta, pero la API no responde como debería. Estos tres los vas a
-encontrar probando con `curl`:
+La aplicación levanta, pero la API no responde como debería. Estos tres fallos se
+encuentran probando con `curl`:
 
 ```bash
 BASE=http://localhost:8080/criminal_justice_ws/api/v1
 TOKEN=$(curl -s -X POST $BASE/auth/login -H "Content-Type: application/json" \
   -d '{"username":"supervisor01","password":"1234"}' | grep -o '"token":"[^"]*"' | cut -d'"' -f4)
 
-# a) Listar
+# Listar
 curl -s -o /dev/null -w "%{http_code}\n" $BASE/agents -H "Authorization: Bearer $TOKEN"
 
-# b) Registrar
+# Registrar
 curl -s -o /dev/null -w "%{http_code}\n" -X POST $BASE/agents \
   -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
   -d '{"badgeNumber":"FBI-2001","name":"Nuevo Agente","division":"Cibercrimen","status":"ACTIVO"}'
 ```
 
-Los síntomas que vas a ver, en este orden:
+Los síntomas aparecen en este orden, uno después de corregir el anterior:
 
-| Síntoma | Pista |
-|---|---|
-| La lista responde **404** aunque la aplicación está desplegada | ¿Cómo se arma la URL completa de un recurso? Son tres pedazos concatenados |
-| Registrar responde **415 Unsupported Media Type** | El servidor te está diciendo que no acepta lo que le mandaste. ¿Qué formato dice aceptar? |
-| Registrar responde **500**, pero listar sigue funcionando bien | Leer funciona y escribir no: ¿qué hace el servidor al recibir JSON que no hace al enviarlo? El `server.log` tiene la respuesta exacta |
+| Síntoma | Por dónde buscar |
+| --- | --- |
+| Listar responde 404, aunque la aplicación está desplegada | La URL de un recurso se arma con tres partes concatenadas. Revise cuáles son y de dónde sale cada una |
+| Registrar responde 415 Unsupported Media Type | El servidor indica que no acepta el formato enviado. Revise qué formato declara aceptar el recurso |
+| Registrar responde 500, pero listar sigue funcionando | Leer funciona y escribir no. Piense qué hace el servidor al recibir JSON que no hace al enviarlo. El `server.log` tiene el mensaje exacto, en la línea `Caused by:` |
 
-**Terminaste este nivel cuando:** listar responde 200 y registrar crea el agente.
+Nivel terminado cuando listar responde 200 y registrar crea el agente.
 
-### Nivel 3 · Funciona, pero está mal · 2 fallos
+### Nivel 3. Funciona, pero está mal (2 fallos)
 
-Los dos últimos **no producen ningún error**. La API responde, los datos se guardan y a
-simple vista todo parece correcto. Aun así, ambos son bugs, y uno de los dos es el más
-grave de toda la práctica.
+Los dos últimos fallos no producen ningún error. La API responde, los datos se guardan y a
+simple vista todo parece correcto. Aun así son fallos, y uno de los dos es el más grave de
+la práctica.
 
-Para encontrarlos, comparate contra la tabla de "Qué debe hacer el módulo" y contra el
-recurso de criminales.
+Para encontrarlos, compare el comportamiento real contra la tabla de la sección "Qué debe
+hacer el módulo cuando esté terminado", y el código contra `CriminalResource`.
 
-Dos comandos que ayudan:
+Estos dos comandos ayudan:
 
 ```bash
-# Mirá las cabeceras completas de la respuesta, no solo el cuerpo
+# Muestra las cabeceras completas de la respuesta, no solo el cuerpo
 curl -s -D- -o /dev/null -X POST $BASE/agents \
   -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
   -d '{"badgeNumber":"FBI-2002","name":"Otro Agente","division":"Forense","status":"ACTIVO"}'
 
-# Probá qué pasa SIN token, y compará con el mismo caso en /criminals
+# Compare el mismo caso sin token en los dos recursos
 curl -s -o /dev/null -w "%{http_code}\n" $BASE/agents
 curl -s -o /dev/null -w "%{http_code}\n" $BASE/criminals
 ```
 
-**Terminaste este nivel cuando:** `mvn test` está completamente en verde.
+Nivel terminado cuando `mvn test` está completamente en verde y el comportamiento coincide
+con la tabla.
 
----
-
-## Tu semáforo: las pruebas
+## Las pruebas como referencia
 
 ```bash
 mvn test
 ```
 
-Hay 28 pruebas del módulo de agentes. Al empezar no corren siquiera, porque el proyecto no
-compila; después irán pasando de rojo a verde a medida que arregles.
+El módulo de agentes tiene 28 pruebas. Al inicio no llegan a ejecutarse porque el proyecto
+no compila; después van pasando a verde conforme avance.
 
-Leé el mensaje de cada fallo: están escritos para decirte **qué se espera**, no solo que
-algo no coincide. Por ejemplo:
+Los mensajes de las pruebas indican qué se espera, no solo que algo no coincide. Por
+ejemplo:
 
-```
+```text
 AgentResourceTest.createDevuelveResponse
   un POST que crea algo responde 201 y el header Location
   expected: <jakarta.ws.rs.core.Response> but was: <com.fbi.cjs.shared.api.ApiResponse>
 ```
 
-Cuidado: **hay dos fallos que ninguna prueba detecta.** Que `mvn test` esté verde no
-significa que hayas terminado; también tiene que desplegar y comportarse como dice la tabla.
-Pensá por qué una prueba unitaria no puede ver esos dos.
+Tenga presente que **dos de los ocho fallos no los detecta ninguna prueba**. Que `mvn test`
+esté en verde no significa que la práctica esté terminada: la aplicación también tiene que
+desplegar y comportarse como indica la tabla. Una de las preguntas de la entrega es
+justamente por qué esos dos fallos no se pueden detectar con pruebas unitarias.
 
----
+## Criterios de aceptación
 
-## Bitácora (se entrega)
+Antes de entregar, verifique que estos comandos den estos resultados:
 
-Completá esta tabla con los ocho fallos. Es la parte que más peso tiene en la nota.
+```bash
+mvn clean install
+# BUILD SUCCESS y todas las pruebas en verde
 
-| # | Archivo | Síntoma que observé | Causa real | Cómo lo arreglé | Cómo comprobé que quedó bien |
-|---|---|---|---|---|---|
+asadmin deploy --force=true ws/target/criminal_justice_ws.war
+# Command deploy executed successfully
+```
+
+```bash
+BASE=http://localhost:8080/criminal_justice_ws/api/v1
+TOKEN=$(curl -s -X POST $BASE/auth/login -H "Content-Type: application/json" \
+  -d '{"username":"supervisor01","password":"1234"}' | grep -o '"token":"[^"]*"' | cut -d'"' -f4)
+
+curl -s -o /dev/null -w "%{http_code}\n" $BASE/agents
+# 401
+
+curl -s -o /dev/null -w "%{http_code}\n" $BASE/agents -H "Authorization: Bearer $TOKEN"
+# 200
+
+curl -s -D- -o /dev/null -X POST $BASE/agents -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"badgeNumber":"FBI-2001","name":"Nuevo","division":"Cibercrimen","status":"ACTIVO"}'
+# HTTP/1.1 201 Created
+# Location: http://localhost:8080/criminal_justice_ws/api/v1/agents/<id>
+```
+
+## Dónde buscar según el tipo de problema
+
+| Tipo de problema | Dónde mirar |
+| --- | --- |
+| Compilación | El mensaje de `[ERROR]`: archivo, línea y símbolo que no encuentra |
+| Despliegue | La salida de `asadmin deploy` y el `server.log` |
+| Una ruta responde 404 | `JaxRsApplication`, el `@Path` del recurso y la clase `ApiPaths` |
+| Un 4xx al enviar datos | Las anotaciones de la clase del recurso |
+| Un 500 | El `server.log`, en la línea `Caused by:` |
+| Token y permisos | `@Secured` y `@AllowedRoles` en `CriminalResource` |
+
+En la mayoría de los casos la respuesta aparece al abrir el archivo equivalente del módulo
+de criminales o de usuarios y compararlo con el de agentes.
+
+## Bitácora
+
+Complete esta tabla con los ocho fallos.
+
+| # | Archivo | Síntoma observado | Causa | Corrección aplicada | Cómo lo comprobó |
+| --- | --- | --- | --- | --- | --- |
 | 1 | | | | | |
 | 2 | | | | | |
 | 3 | | | | | |
@@ -196,70 +229,32 @@ Completá esta tabla con los ocho fallos. Es la parte que más peso tiene en la 
 | 7 | | | | | |
 | 8 | | | | | |
 
-Además, respondé en dos o tres líneas cada una:
+Responda además, en dos o tres líneas cada una:
 
 1. ¿Por qué el fallo del nivel 1 no lo detecta ninguna prueba unitaria?
-2. De los dos fallos del nivel 3, ¿cuál te parece más peligroso en un sistema real y por qué?
-3. Si tuvieras que evitar que estos ocho fallos vuelvan a pasar, ¿qué agregarías al proyecto?
+2. De los dos fallos del nivel 3, ¿cuál es más peligroso en un sistema real y por qué?
+3. ¿Qué le agregaría al proyecto para que estos ocho fallos no se repitan?
 
----
+## Ejercicio opcional
 
-## Criterios de aceptación
+Si termina antes, agregue al módulo de agentes un filtro por división:
 
-Antes de entregar, esto tiene que dar exactamente esto:
-
-```bash
-mvn clean install                  # BUILD SUCCESS, todas las pruebas en verde
-asadmin deploy --force=true ws/target/criminal_justice_ws.war   # deploy successful
-```
-
-```bash
-BASE=http://localhost:8080/criminal_justice_ws/api/v1
-TOKEN=...   # el de supervisor01
-
-curl -s -o /dev/null -w "%{http_code}\n" $BASE/agents                              # 401
-curl -s -o /dev/null -w "%{http_code}\n" $BASE/agents -H "Authorization: Bearer $TOKEN"   # 200
-curl -s -D- -o /dev/null -X POST $BASE/agents -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"badgeNumber":"FBI-2001","name":"Nuevo","division":"Cibercrimen","status":"ACTIVO"}'
-# 201 Created + Location: .../agents/6
-```
-
----
-
-## Dónde mirar cuando te atores
-
-| Si el problema es de… | Mirá… |
-|---|---|
-| Compilación | El mensaje de `[ERROR]`: archivo, línea y nombre del símbolo |
-| Despliegue | La salida de `asadmin deploy` y `server.log` |
-| Una ruta que da 404 | `JaxRsApplication`, el `@Path` del recurso y `ApiPaths` |
-| Un 4xx al mandar datos | Las anotaciones de la clase del recurso |
-| Un 500 | `server.log`: la causa real está en el `Caused by:` |
-| Permisos y token | `@Secured` y `@AllowedRoles` en `CriminalResource` |
-
-Y la regla que resuelve la mayoría: **abrí el archivo equivalente de criminales o usuarios
-y comparalo línea por línea con el de agentes.**
-
----
-
-## Extensión opcional
-
-Si terminás antes, agregá al módulo de agentes un filtro por división:
-
-```
+```text
 GET /agents?division=Cibercrimen
 ```
 
-Tiene que funcionar combinado con los filtros que ya existen (`search` y `status`), y
-necesita su propia prueba en `AgentRepositoryContractTest`. Fijate cómo está resuelto el
-filtro por nivel de peligrosidad en criminales.
+Debe funcionar combinado con los filtros que ya existen (`search` y `status`) y necesita su
+propia prueba en `AgentRepositoryContractTest`. Como referencia, revise cómo está resuelto
+el filtro por nivel de peligrosidad en el módulo de criminales.
 
----
+Para este ejercicio sí puede tocar los archivos de prueba: la regla 2 se refiere a no
+alterar las pruebas existentes para que pasen, no a que no se puedan agregar nuevas. Si
+cambia la firma del método `search` del repositorio, va a tener que ajustar las llamadas de
+las pruebas actuales; indique ese cambio en la entrega.
 
 ## Entrega
 
-1. Tu rama con los ocho fallos corregidos, commits con mensajes en formato
-   Conventional Commits (`fix(ws): ...`).
+1. La rama con los ocho fallos corregidos y los commits con mensajes en formato
+   Conventional Commits, por ejemplo `fix(ws): corregir la ruta del recurso de agentes`.
 2. La bitácora completa y las tres preguntas respondidas.
 3. La salida de `mvn test` en verde.

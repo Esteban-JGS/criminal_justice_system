@@ -57,7 +57,7 @@ class AgentResourceTest {
 		assertTrue(produces != null && Arrays.asList(produces.value()).contains(MediaType.APPLICATION_JSON),
 				"falta @Produces(MediaType.APPLICATION_JSON)");
 		assertTrue(consumes != null && Arrays.asList(consumes.value()).contains(MediaType.APPLICATION_JSON),
-				"sin @Consumes el servidor responde 415 al recibir JSON");
+				"el recurso debe consumir application/json; con otro tipo el servidor responde 415");
 	}
 
 	@Test
