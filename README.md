@@ -11,6 +11,11 @@ con dos aplicaciones que se comunican por HTTP:
 Ambos comparten un tercer módulo, **`shared/`**, con las clases que viajan como JSON entre
 uno y otro.
 
+> En esta rama el módulo de **agentes** está incompleto a propósito: es el ejercicio que
+> describe [PRACTICA.md](PRACTICA.md). Mientras no se resuelva, `mvn clean install` falla.
+> El resto del sistema (criminales, usuarios, autenticación y el cliente de escritorio)
+> funciona con normalidad.
+
 ---
 
 ## Cómo encajan las piezas
@@ -48,6 +53,7 @@ el web service.
 criminal_justice_system/
 ├── pom.xml                     POM padre (packaging pom): lista los módulos y centraliza
 │                               las versiones de librerías y plugins
+├── PRACTICA.md                 enunciado del ejercicio de diagnóstico de fallos
 ├── package.json                herramientas de apoyo (formato y validación de commits)
 ├── biome.json                  configuración del formateador de JSON/JS
 ├── commitlint.config.js        reglas de los mensajes de commit
@@ -278,6 +284,9 @@ Al terminar deben existir:
 
 - `ws/target/criminal_justice_ws.war`
 - `front/target/criminal-justice-system-front-1.0.jar`
+
+Si el módulo de agentes todavía tiene los fallos del ejercicio, este paso termina en
+`BUILD FAILURE`; ver [PRACTICA.md](PRACTICA.md).
 
 ### Paso 2 · Arrancar el servidor Payara
 
@@ -550,7 +559,7 @@ el WAR esté desplegado: al redesplegar vuelven a su estado inicial.
 mvn test
 ```
 
-50 pruebas con JUnit 5. Corren en menos de un segundo, sin Payara y sin base de datos.
+78 pruebas con JUnit 5. Corren en menos de un segundo, sin Payara y sin base de datos.
 
 | Módulo | Qué cubre |
 | --- | --- |
@@ -558,6 +567,7 @@ mvn test
 | `ws` · repositorios | El contrato de `CriminalRepository` y `UserRepository` |
 | `ws` · servicios | Reglas de negocio: unicidad, normalización, 404 y auto-bloqueo |
 | `ws` · seguridad | Emisión, validación, revocación y vencimiento de tokens |
+| `ws` · recursos REST | El contrato HTTP de un recurso, leído desde sus anotaciones |
 
 Las pruebas de repositorio son **contratos abstractos** (`CriminalRepositoryContractTest`,
 `UserRepositoryContractTest`): describen el comportamiento que debe cumplir cualquier

@@ -75,9 +75,10 @@ se puede desplegar, y hasta que no despliegue no se pueden ver los fallos de eje
 
 `mvn clean install` no llega a construir el archivo `.war`.
 
-Lea los mensajes de `[ERROR]` completos, con el archivo y la línea de cada uno. Va a ver
-cinco mensajes, pero no son cinco problemas distintos: cuente cuántas causas hay en
-realidad.
+Lea los mensajes de `[ERROR]` completos, con el archivo y la línea de cada uno. Maven los
+imprime dos veces, primero al compilar y otra vez en el resumen final, así que en total son
+cinco errores distintos. Cinco errores no significan cinco problemas: cuente cuántas causas
+hay en realidad.
 
 Nivel terminado cuando `mvn clean install` responde `BUILD SUCCESS`.
 
@@ -95,8 +96,8 @@ Nivel terminado cuando `asadmin deploy` responde `Command deploy executed succes
 
 ### Nivel 2. Falla al usarlo (3 fallos)
 
-La aplicación levanta, pero la API no responde como debería. Estos tres fallos se
-encuentran probando con `curl`:
+La aplicación levanta, pero la API no responde como debería. Dos de estos tres fallos ya
+aparecen señalados en las pruebas; el tercero solo se ve al ejecutar la API. Para probarla:
 
 ```bash
 BASE=http://localhost:8080/criminal_justice_ws/api/v1
@@ -160,9 +161,9 @@ Los mensajes de las pruebas indican qué se espera, no solo que algo no coincide
 ejemplo:
 
 ```text
-AgentResourceTest.createDevuelveResponse
-  un POST que crea algo responde 201 y el header Location
-  expected: <jakarta.ws.rs.core.Response> but was: <com.fbi.cjs.shared.api.ApiResponse>
+[ERROR]   AgentResourceTest.createDevuelveResponse:76 un POST que crea algo responde 201
+y el header Location; eso necesita construir un Response ==> expected:
+<jakarta.ws.rs.core.Response> but was: <com.fbi.cjs.shared.api.ApiResponse>
 ```
 
 Tenga presente que **dos de los ocho fallos no los detecta ninguna prueba**. Que `mvn test`
