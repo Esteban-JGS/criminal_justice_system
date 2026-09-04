@@ -83,3 +83,7 @@ node_modules/
 ejemplo-TareaProgra3WS-main/
 
 ws/docs/oracle_schema.md
+
+# Esquema resuelto de la practica de normalizacion: version privada para el
+# profesorado, no se sube al repo que ven los estudiantes.
+db-normalizacion/esquema_resuelto.sql
