@@ -4,6 +4,7 @@ import com.fbi.cjs.shared.dto.AgentDTO;
 import com.fbi.cjs.shared.enums.AgentStatus;
 import com.fbi.cjs.ws.repository.AgentRepository;
 import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+@ApplicationScoped
 public class MockAgentRepository implements AgentRepository {
 
 	private final Map<Long, AgentDTO> store = new ConcurrentHashMap<>();
@@ -85,6 +87,11 @@ public class MockAgentRepository implements AgentRepository {
 		stored.setId(id);
 		store.put(id, stored);
 		return Optional.of(copy(stored));
+	}
+
+	@Override
+	public boolean deleteById(Long id) {
+		return store.remove(id) != null;
 	}
 
 	private boolean matchesText(AgentDTO agent, String needle) {

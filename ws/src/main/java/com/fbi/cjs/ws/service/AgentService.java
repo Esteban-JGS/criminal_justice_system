@@ -4,7 +4,7 @@ import com.fbi.cjs.shared.api.ResponseCode;
 import com.fbi.cjs.shared.dto.AgentDTO;
 import com.fbi.cjs.shared.enums.AgentStatus;
 import com.fbi.cjs.ws.exception.BusinessRuleException;
-import com.fbi.cjs.ws.exception.ResourceNotFound;
+import com.fbi.cjs.ws.exception.ResourceNotFoundException;
 import com.fbi.cjs.ws.repository.AgentRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -25,7 +25,7 @@ public class AgentService {
 	}
 
 	public AgentDTO findById(Long id) {
-		return agentRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Agente", id));
+		return agentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Agente", id));
 	}
 
 	public AgentDTO create(AgentDTO agent) {
@@ -49,12 +49,12 @@ public class AgentService {
 					"La placa '" + agent.getBadgeNumber() + "' ya esta asignada a otro agente.");
 		}
 
-		return agentRepository.update(id, agent).orElseThrow(() -> new ResourceNotFound("Agente", id));
+		return agentRepository.update(id, agent).orElseThrow(() -> new ResourceNotFoundException("Agente", id));
 	}
 
 	public void delete(Long id) {
 		if (!agentRepository.deleteById(id)) {
-			throw new ResourceNotFound("Agente", id);
+			throw new ResourceNotFoundException("Agente", id);
 		}
 	}
 

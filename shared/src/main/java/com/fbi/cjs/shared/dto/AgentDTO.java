@@ -25,6 +25,9 @@ public class AgentDTO {
 	@NotNull(message = "El estado es obligatorio")
 	private AgentStatus status;
 
+	public AgentDTO() {
+	}
+
 	public AgentDTO(Long id, String badgeNumber, String name, String division, AgentStatus status) {
 		this.id = id;
 		this.badgeNumber = badgeNumber;

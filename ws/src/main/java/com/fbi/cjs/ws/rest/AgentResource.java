@@ -1,5 +1,6 @@
 package com.fbi.cjs.ws.rest;
 
+import com.fbi.cjs.shared.api.ApiPaths;
 import com.fbi.cjs.shared.api.ApiResponse;
 import com.fbi.cjs.shared.api.ResponseCode;
 import com.fbi.cjs.shared.dto.AgentDTO;
@@ -7,6 +8,7 @@ import com.fbi.cjs.shared.enums.AgentStatus;
 import com.fbi.cjs.shared.enums.Role;
 import com.fbi.cjs.ws.exception.BusinessRuleException;
 import com.fbi.cjs.ws.security.AllowedRoles;
+import com.fbi.cjs.ws.security.Secured;
 import com.fbi.cjs.ws.service.AgentService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -19,14 +21,18 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-@Path("agent")
+@Path(ApiPaths.AGENTS)
+@Secured
 @Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.TEXT_PLAIN)
+@Consumes(MediaType.APPLICATION_JSON)
 public class AgentResource {
 
 	@Inject
@@ -47,8 +53,11 @@ public class AgentResource {
 
 	@POST
 	@AllowedRoles({Role.SUPERVISOR, Role.JEFE_FBI})
-	public ApiResponse<AgentDTO> create(@Valid AgentDTO agent) {
-		return ApiResponse.created("Agente registrado correctamente.", agentService.create(agent));
+	public Response create(@Valid AgentDTO agent, @Context UriInfo uriInfo) {
+		AgentDTO created = agentService.create(agent);
+
+		return Response.created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(created.getId())).build())
+				.entity(ApiResponse.created("Agente registrado correctamente.", created)).build();
 	}
 
 	@PUT
