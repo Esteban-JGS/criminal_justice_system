@@ -11,10 +11,9 @@ con dos aplicaciones que se comunican por HTTP:
 Ambos comparten un tercer módulo, **`shared/`**, con las clases que viajan como JSON entre
 uno y otro.
 
-> En esta rama el módulo de **agentes** está incompleto a propósito: es el ejercicio que
-> describe [PRACTICA.md](PRACTICA.md). Mientras no se resuelva, `mvn clean install` falla.
-> El resto del sistema (criminales, usuarios, autenticación y el cliente de escritorio)
-> funciona con normalidad.
+> El módulo de **agentes** se usó como ejercicio de diagnóstico de fallos, descrito en
+> [PRACTICA.md](PRACTICA.md) y resuelto en [SOLUCION-PRACTICA.md](SOLUCION-PRACTICA.md).
+> Ya está corregido: el proyecto compila y las 78 pruebas pasan.
 
 ---
 
@@ -54,6 +53,7 @@ criminal_justice_system/
 ├── pom.xml                     POM padre (packaging pom): lista los módulos y centraliza
 │                               las versiones de librerías y plugins
 ├── PRACTICA.md                 enunciado del ejercicio de diagnóstico de fallos
+├── SOLUCION-PRACTICA.md        respuestas de ese ejercicio
 ├── package.json                herramientas de apoyo (formato y validación de commits)
 ├── biome.json                  configuración del formateador de JSON/JS
 ├── commitlint.config.js        reglas de los mensajes de commit
@@ -287,9 +287,6 @@ Al terminar deben existir:
 
 - `ws/target/criminal_justice_ws.war`
 - `front/target/criminal-justice-system-front-1.0.jar`
-
-Si el módulo de agentes todavía tiene los fallos del ejercicio, este paso termina en
-`BUILD FAILURE`; ver [PRACTICA.md](PRACTICA.md).
 
 ### Paso 2 · Arrancar el servidor Payara
 
